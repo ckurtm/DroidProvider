@@ -59,11 +59,11 @@ public class Pojo2 extends ObjectTable {
     @Provide(BaseProvider.PROVIDE_TYPE) 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + BASE;
     
-    @Provide(BaseProvider.PROVIDE_ONE) 
-    public static final int ONE = 3;
+//    @Provide(BaseProvider.PROVIDE_ONE) 
+    public static int ONE;
     
-    @Provide(BaseProvider.PROVIDE_MANY) 
-    public static final int MANY = 4;
+//    @Provide(BaseProvider.PROVIDE_MANY) 
+    public static int MANY;
     
     @Provide(BaseProvider.PROVIDE_KEY) 
     public static final String KEY = "pid";

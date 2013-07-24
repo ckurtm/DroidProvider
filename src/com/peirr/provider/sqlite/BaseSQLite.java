@@ -130,10 +130,14 @@ public class BaseSQLite extends SQLiteSecureHelper {
 	public void createObjectValues() throws NoSuchAlgorithmException, NoSuchFieldException, InvalidKeyException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, ClassNotFoundException, IllegalBlockSizeException {
 		Log.d(tag,"createObjectValues()");
 		objectValues.clear();
+		int i = 0;
 		for(String key: objects.keySet()){
 			ProviderObjectValue pv = ObjectProcessor.getProviderValues(objects.get(key));
 			Log.d(tag,"[]+ " + pv);
+			pv.ONE = (i+2) -1;
+			pv.MANY = (i+2);
 			objectValues.add(pv);
+			i++;
 		}
 	}
 
