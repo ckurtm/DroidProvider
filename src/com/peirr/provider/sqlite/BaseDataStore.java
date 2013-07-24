@@ -24,7 +24,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +42,6 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.peirr.provider.models.Pojo;
-import com.peirr.provider.models.Pojo2;
 import com.peirr.provider.sqlite.annotations.ObjectProcessor;
 
 /**
@@ -53,26 +50,15 @@ import com.peirr.provider.sqlite.annotations.ObjectProcessor;
  * @author kurt
  *
  */
-public class BaseSQLite extends SQLiteSecureHelper {
-
-
-
-	private static Map<String,Object> objects = new HashMap<String,Object>();
-	private List<ProviderObjectValue> objectValues = new ArrayList<ProviderObjectValue>();
-	/**
-	 * This is where you add your objects that are "DB aware"
-	 */
-	static {
-		objects.put(Pojo.TABLE, new Pojo());
-		objects.put(Pojo2.TABLE, new Pojo2());
-	}
-
-	String tag = BaseSQLite.class.getSimpleName();
+public abstract class BaseDataStore extends SQLiteSecureHelper {
+	private List<ProviderObjectValue> objectValues = new ArrayList<ProviderObjectValue>();	
+	public abstract Map<String,Object> getObjects();
+	String tag = BaseDataStore.class.getSimpleName();
 	public List<ProviderObjectValue> getObjectValues() {
 		return objectValues;
 	}
 
-	public BaseSQLite(Context context) {
+	public BaseDataStore(Context context) {
 		super(context);
 		try {
 			if(objectValues.size() == 0){
@@ -106,7 +92,7 @@ public class BaseSQLite extends SQLiteSecureHelper {
 		super.onCreate(db);
 		try {
 			for(ProviderObjectValue value:getObjectValues()){
-				proc.createTable(objects.get(value.TABLE).getClass().getName(),value.TABLE);
+				proc.createTable(getObjects().get(value.TABLE).getClass().getName(),value.TABLE);
 			}
 		} catch (ClassNotFoundException e) {
 			Log.e(tag, e.getMessage(), e);
@@ -131,8 +117,8 @@ public class BaseSQLite extends SQLiteSecureHelper {
 		Log.d(tag,"createObjectValues()");
 		objectValues.clear();
 		int i = 0;
-		for(String key: objects.keySet()){
-			ProviderObjectValue pv = ObjectProcessor.getProviderValues(objects.get(key));
+		for(String key: getObjects().keySet()){
+			ProviderObjectValue pv = ObjectProcessor.getProviderValues(getObjects().get(key));
 			Log.d(tag,"[]+ " + pv);
 			pv.ONE = (i+2) -1;
 			pv.MANY = (i+2);
@@ -141,6 +127,9 @@ public class BaseSQLite extends SQLiteSecureHelper {
 		}
 	}
 
+	
+	
+	
 	/**
 	 * Add a new row into the provided table
 	 * @param values - the data to insert

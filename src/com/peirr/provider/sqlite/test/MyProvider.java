@@ -19,7 +19,14 @@
 package com.peirr.provider.sqlite.test;
 
 import com.peirr.provider.sqlite.BaseProvider;
+import com.peirr.provider.sqlite.BaseDataStore;
 
 public class MyProvider extends BaseProvider {
+
+	@Override
+	public BaseDataStore getMyDB() {
+		return new MyDataStore(getContext().getApplicationContext());
+	}
+	
 
 }

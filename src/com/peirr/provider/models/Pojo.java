@@ -52,9 +52,6 @@ public class Pojo extends ObjectTable {
     @Provide(BaseProvider.PROVIDE_KEY)
     public static final String KEY = "pid";
     
-    
-    
-
     public long getPid() {
 		return pid;
 	}

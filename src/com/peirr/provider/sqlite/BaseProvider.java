@@ -30,31 +30,39 @@ import android.net.Uri;
 import android.util.Log;
 
 /**
- * This is a dynamic content Provider that maps all objects that were instatiated in the {@link BaseSQLite} class as tables
+ * This is a dynamic content Provider that maps all objects that were instatiated in the {@link BaseDataStore} class as tables
  * for this app.
  * @author kurt
  * 
  */
-public class BaseProvider extends ContentProvider {
-
+public abstract class BaseProvider extends ContentProvider {
+	
     static String tag = BaseProvider.class.getSimpleName();
     public static final int PROVIDE_TABLE = 0x029;
     public static final int PROVIDE_URI = 0x030;
     public static final int PROVIDE_KEY = 0x035;
 
-    private BaseSQLite sqLite;
+    private BaseDataStore sqLite;
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private static String AUTHORITY = "com.peirr.provider.db";
     
     @Override
     public boolean onCreate() {
-        sqLite = new BaseSQLite(getContext());
+        sqLite = getMyDB();
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             Log.d(tag,"pv: " + pv);
-            sURIMatcher.addURI(AUTHORITY,pv.TABLE,pv.MANY);
-            sURIMatcher.addURI(AUTHORITY,pv.TABLE + "/#",pv.ONE);
+            sURIMatcher.addURI(getAuthority(),pv.TABLE,pv.MANY);
+            sURIMatcher.addURI(getAuthority(),pv.TABLE + "/#",pv.ONE);
         }
         return true;
+    }
+    
+    public abstract BaseDataStore getMyDB();
+//    {
+//    	return new BaseSQLite(getContext());
+//    }
+    
+    public static String getAuthority(){
+    	return Config.AUTHORITY;
     }
 
     @Override
@@ -191,11 +199,8 @@ public class BaseProvider extends ContentProvider {
         return rowsAffected;
     }
 
-
-
-
     public static final Uri getContentUri(String contentString){
-        String string = contentString.replace("#AUTHORITY#", AUTHORITY);
+        String string = contentString.replace("#AUTHORITY#", getAuthority());
         Uri uri = Uri.parse(string);
         return uri;
     }

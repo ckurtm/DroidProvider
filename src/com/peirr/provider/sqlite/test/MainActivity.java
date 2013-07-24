@@ -58,27 +58,27 @@ public class MainActivity extends Activity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ContentValues values = new ContentValues();
-//                values.put(Pojo.Mapper.pid,0);
-//                values.put(Pojo.Mapper.name,"xxx");
-//                long start = System.currentTimeMillis();
-//                Uri uri  = getContentResolver().insert(Pojo.CONTENT_URI,values);
-////                base.addRowsToTable(Pojo.CONTENT_URI,contentValues);
-//                long time = System.currentTimeMillis() - start;
-//                Log.d(tag,"time: " + time);
-////                int rows = getContentResolver().delete(Pojo.CONTENT_URI,Pojo.ObjectMapper._ID + ">?",new String[]{"100"});
-////                int rows = getContentResolver().update(Pojo.CONTENT_URI, values, Pojo.ObjectMapper._ID + ">?", new String[]{"100"});
-////               Cursor c = getContentResolver().query(Pojo.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
-//                msg1.setText("" + uri);
-            	 Pojo p = new Pojo();
-            	 p.setName("my name");
-            	 p.setPid(234l);
-            	 
-            	 try {
-					ObjectProcessor.getContentValues(p);
-				} catch (Exception e) {
-					Log.e(tag,"error",e);
-				}
+                ContentValues values = new ContentValues();
+                values.put(Pojo.Mapper.pid,0);
+                values.put(Pojo.Mapper.name,"xxx");
+                long start = System.currentTimeMillis();
+                Uri uri  = getContentResolver().insert(Pojo.CONTENT_URI,values);
+//                base.addRowsToTable(Pojo.CONTENT_URI,contentValues);
+                long time = System.currentTimeMillis() - start;
+                Log.d(tag,"time: " + time);
+//                int rows = getContentResolver().delete(Pojo.CONTENT_URI,Pojo.ObjectMapper._ID + ">?",new String[]{"100"});
+//                int rows = getContentResolver().update(Pojo.CONTENT_URI, values, Pojo.ObjectMapper._ID + ">?", new String[]{"100"});
+//               Cursor c = getContentResolver().query(Pojo.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
+                msg1.setText("" + uri);
+//            	 Pojo p = new Pojo();
+//            	 p.setName("my name");
+//            	 p.setPid(234l);
+//            	 
+//            	 try {
+//					ObjectProcessor.getContentValues(p);
+//				} catch (Exception e) {
+//					Log.e(tag,"error",e);
+//				}
 
             }
         });

@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider android:authorities="@string/authority" android:name=".sqlite.BaseProvider"></provider>
+        <provider android:authorities="@string/authority" android:name=".sqlite.test.MyProvider"></provider>
     </application>
 
 </manifest>
