@@ -53,7 +53,7 @@ import java.util.List;
 public class ObjectProcessor {
 	protected SQLiteDatabase db;
 	protected SecretKey k;
-	String tag = ObjectProcessor.class.getSimpleName();
+	static String tag = ObjectProcessor.class.getSimpleName();
 
 	public ObjectProcessor(SecretKey k) {
 		this.k = k;
@@ -140,7 +140,7 @@ public class ObjectProcessor {
 		queryBuilder.append(");");
 		String query = queryBuilder.toString();
 		Log.d(tag, "TABLE CREATION: " + query);
-		//        db.execSQL(query);
+		db.execSQL(query);
 	}
 
 
@@ -156,20 +156,24 @@ public class ObjectProcessor {
 	public static ContentValues getContentValues(Object obj) throws Exception{
 		//        LOG.d(tag,"getContentValues: " + obj);
 		ContentValues cv =  new ContentValues();
-		Field[] fields = null;
+		List<Field> fields = new ArrayList<Field>();
 		Class<?> clazz = Class.forName(obj.getClass().getName());
-		fields = clazz.getFields();
 		Class<?> cls = obj.getClass();
-		//
-		//        for (Field field : fields) {
-		//            Annotation annotation = field.getAnnotation(Column.class);
-		//            if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
-		//                if ((annotation instanceof Column) && !field.getName().equals("_id")) {
-		//                    LOG.d(tag," - " + field.getName());
-		//                }
-		//            }
-		//        }
 
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
+		}
 
 		for (Field field : fields) {
 			Annotation annotation = field.getAnnotation(Column.class);
@@ -178,11 +182,11 @@ public class ObjectProcessor {
 					Column col = (Column)annotation;
 					//                    LOG.d(tag,"getField: " + field.getName());
 					Field isf = cls.getDeclaredField(field.getName());
+					if(isf.getModifiers() == Modifier.PRIVATE){
+						isf.setAccessible(true);
+					}
 					if (String.class.isAssignableFrom(field.getType())) {
 						String val = (String) isf.get(obj);
-						//                        if(col.e()){
-						//                            val = cipher.encrypt(k,val);
-						//                        }
 						cv.put(col.n(),val);
 					}else if(field.getType() == Integer.TYPE){
 						int val = isf.getInt(obj);
@@ -203,12 +207,15 @@ public class ObjectProcessor {
 						Date date = (Date)isf.get(obj);
 						cv.put(col.n(),date.getTime());
 					}
+					if(isf.getModifiers() == Modifier.PRIVATE){
+						isf.setAccessible(false);
+					}
 
 				}
 
 			}
 		}
-		//		LOG.d(tag,"CONTENT CREATION: " + cv);
+				Log.d(tag,"CONTENT CREATION: " + cv);
 		return cv;
 	}
 

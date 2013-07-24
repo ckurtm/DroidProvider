@@ -70,13 +70,16 @@ public class MainActivity extends Activity {
 ////                int rows = getContentResolver().update(Pojo.CONTENT_URI, values, Pojo.ObjectMapper._ID + ">?", new String[]{"100"});
 ////               Cursor c = getContentResolver().query(Pojo.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
 //                msg1.setText("" + uri);
-            	ObjectProcessor op = new ObjectProcessor(null);
+            	 Pojo p = new Pojo();
+            	 p.setName("my name");
+            	 p.setPid(234l);
+            	 
             	 try {
-					op.createTable(new Pojo().getClass().getName(),Pojo.TABLE);
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ObjectProcessor.getContentValues(p);
+				} catch (Exception e) {
+					Log.e(tag,"error",e);
 				}
+
             }
         });
 

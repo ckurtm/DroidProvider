@@ -51,8 +51,39 @@ public class Pojo extends ObjectTable {
     
     @Provide(BaseProvider.PROVIDE_KEY)
     public static final String KEY = "pid";
+    
+    
+    
 
-    public final class Mapper extends ObjectMapper {
+    public long getPid() {
+		return pid;
+	}
+
+
+
+
+	public void setPid(long pid) {
+		this.pid = pid;
+	}
+
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+
+	public final class Mapper extends ObjectMapper {
         public static final String pid = "pid";
         public static final String name = "name";
     }
