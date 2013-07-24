@@ -62,4 +62,9 @@ public abstract class SQLiteSecureHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(tag,"onUpgrade [old:"+oldVersion+"][new:"+newVersion+"]");
     }
+    
+    
+    public SQLiteDatabase getDb() {
+		return db;
+	}
 }

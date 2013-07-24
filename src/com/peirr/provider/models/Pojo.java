@@ -57,6 +57,14 @@ public class Pojo extends ObjectTable {
 	}
 
 
+    public Pojo(){}
+
+	public Pojo(long pid, String name) {
+		this.pid = pid;
+		this.name = name;
+	}
+
+
 
 
 	public void setPid(long pid) {
@@ -80,7 +88,7 @@ public class Pojo extends ObjectTable {
 
 
 
-	public final class Mapper extends ObjectMapper {
+	public static final class Mapper extends ObjectMapper {
         public static final String pid = "pid";
         public static final String name = "name";
     }
