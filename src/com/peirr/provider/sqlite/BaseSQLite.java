@@ -43,9 +43,9 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.peirr.provider.models.Pojo;
+import com.peirr.provider.models.Pojo2;
 import com.peirr.provider.sqlite.annotations.ObjectProcessor;
-import com.peirr.provider.sqlite.test.Pojo;
-import com.peirr.provider.sqlite.test.Pojo2;
 
 /**
  * This is the database util class for handling reads & writes to app sqlite db
@@ -63,8 +63,8 @@ public class BaseSQLite extends SQLiteSecureHelper {
 	 * This is where you add your objects that are "DB aware"
 	 */
 	static {
-		objects.put(Pojo.BASE, new Pojo());
-		objects.put(Pojo2.BASE, new Pojo2());
+		objects.put(Pojo.TABLE, new Pojo());
+		objects.put(Pojo2.TABLE, new Pojo2());
 	}
 
 	String tag = BaseSQLite.class.getSimpleName();
@@ -106,7 +106,7 @@ public class BaseSQLite extends SQLiteSecureHelper {
 		super.onCreate(db);
 		try {
 			for(ProviderObjectValue value:getObjectValues()){
-				proc.createTable(objects.get(value.BASE).getClass().getName(),value.BASE);
+				proc.createTable(objects.get(value.TABLE).getClass().getName(),value.TABLE);
 			}
 		} catch (ClassNotFoundException e) {
 			Log.e(tag, e.getMessage(), e);

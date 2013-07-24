@@ -38,24 +38,21 @@ import android.util.Log;
 public class BaseProvider extends ContentProvider {
 
     static String tag = BaseProvider.class.getSimpleName();
-    public static final int PROVIDE_BASE = 0x029;
+    public static final int PROVIDE_TABLE = 0x029;
     public static final int PROVIDE_URI = 0x030;
-    public static final int PROVIDE_ITEM_TYPE = 0x031;
-    public static final int PROVIDE_TYPE = 0x032;
-    public static final int PROVIDE_ONE = 0x033;
-    public static final int PROVIDE_MANY = 0x034;
     public static final int PROVIDE_KEY = 0x035;
 
     private BaseSQLite sqLite;
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private static String AUTHORITY = "za.co.standardbank.ost.db2";
+    private static String AUTHORITY = "com.peirr.provider.db";
+    
     @Override
     public boolean onCreate() {
         sqLite = new BaseSQLite(getContext());
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             Log.d(tag,"pv: " + pv);
-            sURIMatcher.addURI(AUTHORITY,pv.BASE,pv.MANY);
-            sURIMatcher.addURI(AUTHORITY,pv.BASE + "/#",pv.ONE);
+            sURIMatcher.addURI(AUTHORITY,pv.TABLE,pv.MANY);
+            sURIMatcher.addURI(AUTHORITY,pv.TABLE + "/#",pv.ONE);
         }
         return true;
     }
@@ -101,7 +98,7 @@ public class BaseProvider extends ContentProvider {
         String table = "";
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             if(uriType == pv.MANY){
-                table = pv.BASE;
+                table = pv.TABLE;
                 found = true;
                 break;
             }
@@ -131,7 +128,7 @@ public class BaseProvider extends ContentProvider {
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             if(uriType == pv.MANY){
                 found = true;
-                table = pv.BASE;
+                table = pv.TABLE;
                 break;
             }
         }
@@ -157,7 +154,7 @@ public class BaseProvider extends ContentProvider {
 
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             if((uriType == pv.ONE) || (uriType == pv.MANY)){
-                queryBuilder.setTables(pv.BASE);
+                queryBuilder.setTables(pv.TABLE);
                 found = true;
                 break;
             }

@@ -34,19 +34,19 @@ public class ProviderObjectValue {
     public String TYPE;
     public String ITEM_TYPE;
     public String KEY;
-    public String BASE;
+    public String TABLE;
     public Uri URI;
 
     public int getDeletedRows(Uri uri,int type,SQLiteDatabase db,String selection,String[] args){
         int rowsAffected = 0;
         if(type == MANY){
-            rowsAffected = db.delete(BASE,selection,args);
+            rowsAffected = db.delete(TABLE,selection,args);
         }else if(type == ONE){
             String id = uri.getLastPathSegment();
             if (TextUtils.isEmpty(selection)) {
-                rowsAffected = db.delete(BASE,KEY + "=" + id, null);
+                rowsAffected = db.delete(TABLE,KEY + "=" + id, null);
             } else {
-                rowsAffected = db.delete(BASE,selection + " and " + KEY + "=" + id,args);
+                rowsAffected = db.delete(TABLE,selection + " and " + KEY + "=" + id,args);
             }
         }
         return rowsAffected;
@@ -60,9 +60,9 @@ public class ProviderObjectValue {
             if (!TextUtils.isEmpty(selection)) {
                 modSelection.append(" AND " + selection);
             }
-            rowsAffected = db.update(BASE,values, modSelection.toString(), null);
+            rowsAffected = db.update(TABLE,values, modSelection.toString(), null);
         }else if(type == MANY){
-            rowsAffected =db.update(BASE,values, selection, args);
+            rowsAffected =db.update(TABLE,values, selection, args);
         }
         return rowsAffected;
     }
@@ -75,7 +75,7 @@ public class ProviderObjectValue {
                 ", TYPE='" + TYPE + '\'' +
                 ", ITEM_TYPE='" + ITEM_TYPE + '\'' +
                 ", KEY='" + KEY + '\'' +
-                ", BASE='" + BASE + '\'' +
+                ", BASE='" + TABLE + '\'' +
                 ", URI=" + URI +
                 '}';
     }

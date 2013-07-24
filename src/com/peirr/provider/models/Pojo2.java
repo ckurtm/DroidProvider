@@ -17,17 +17,18 @@
  *   https://github.com/ckurtm/PeirrContentProvider
  */
 
-package com.peirr.provider.sqlite.test;
+package com.peirr.provider.models;
 
+
+import java.util.Date;
+
+import android.net.Uri;
 
 import com.peirr.provider.sqlite.BaseProvider;
 import com.peirr.provider.sqlite.annotations.Column;
 import com.peirr.provider.sqlite.annotations.ObjectMapper;
 import com.peirr.provider.sqlite.annotations.ObjectTable;
 import com.peirr.provider.sqlite.annotations.Provide;
-
-import android.content.ContentResolver;
-import android.net.Uri;
 
 
 /**
@@ -44,26 +45,14 @@ public class Pojo2 extends ObjectTable {
     @Column(n = Pojo2.Mapper.name,e =false) 
     public String name;
     
-    @Column(n = Pojo2.Mapper.other,e =false) 
-    public String other;
+    @Column(n = Pojo2.Mapper.date,e =false) 
+    public Date other;
 
-    @Provide(BaseProvider.PROVIDE_BASE) 
-    public static final String BASE = "pojo2";
+    @Provide(BaseProvider.PROVIDE_TABLE) 
+    public static final String TABLE = "pojo2";
     
     @Provide(BaseProvider.PROVIDE_URI) 
-    public static final Uri CONTENT_URI = BaseProvider.getContentUri("content://#AUTHORITY#/" + BASE);
-    
-    @Provide(BaseProvider.PROVIDE_ITEM_TYPE) 
-    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE  + "/" + BASE;
-    
-    @Provide(BaseProvider.PROVIDE_TYPE) 
-    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + BASE;
-    
-//    @Provide(BaseProvider.PROVIDE_ONE) 
-    public static int ONE;
-    
-//    @Provide(BaseProvider.PROVIDE_MANY) 
-    public static int MANY;
+    public static final Uri CONTENT_URI = BaseProvider.getContentUri("content://#AUTHORITY#/" + TABLE);
     
     @Provide(BaseProvider.PROVIDE_KEY) 
     public static final String KEY = "pid";
@@ -71,7 +60,7 @@ public class Pojo2 extends ObjectTable {
     public final class Mapper extends ObjectMapper {
         public static final String pid = "pid";
         public static final String name = "name";
-        public static final String other = "other";
+        public static final String date = "date";
     }
 
 

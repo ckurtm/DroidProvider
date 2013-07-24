@@ -27,9 +27,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.peirr.provider.R;
+import com.peirr.provider.models.Pojo;
+import com.peirr.provider.models.Pojo2;
+import com.peirr.provider.sqlite.annotations.ObjectProcessor;
 
 public class MainActivity extends Activity {
     String tag = MainActivity.class.getSimpleName();
@@ -54,35 +58,46 @@ public class MainActivity extends Activity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContentValues values = new ContentValues();
-                values.put(Pojo.Mapper.pid,0);
-                values.put(Pojo.Mapper.name,"xxx");
-                long start = System.currentTimeMillis();
-                Uri uri  = getContentResolver().insert(Pojo.CONTENT_URI,values);
-//                base.addRowsToTable(Pojo.CONTENT_URI,contentValues);
-                long time = System.currentTimeMillis() - start;
-                Log.d(tag,"time: " + time);
-//                int rows = getContentResolver().delete(Pojo.CONTENT_URI,Pojo.ObjectMapper._ID + ">?",new String[]{"100"});
-//                int rows = getContentResolver().update(Pojo.CONTENT_URI, values, Pojo.ObjectMapper._ID + ">?", new String[]{"100"});
-//               Cursor c = getContentResolver().query(Pojo.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
-                msg1.setText("" + uri);
+//                ContentValues values = new ContentValues();
+//                values.put(Pojo.Mapper.pid,0);
+//                values.put(Pojo.Mapper.name,"xxx");
+//                long start = System.currentTimeMillis();
+//                Uri uri  = getContentResolver().insert(Pojo.CONTENT_URI,values);
+////                base.addRowsToTable(Pojo.CONTENT_URI,contentValues);
+//                long time = System.currentTimeMillis() - start;
+//                Log.d(tag,"time: " + time);
+////                int rows = getContentResolver().delete(Pojo.CONTENT_URI,Pojo.ObjectMapper._ID + ">?",new String[]{"100"});
+////                int rows = getContentResolver().update(Pojo.CONTENT_URI, values, Pojo.ObjectMapper._ID + ">?", new String[]{"100"});
+////               Cursor c = getContentResolver().query(Pojo.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
+//                msg1.setText("" + uri);
+            	ObjectProcessor op = new ObjectProcessor(null);
+            	 try {
+					op.createTable(new Pojo().getClass().getName(),Pojo.TABLE);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
 
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                ContentValues values = new ContentValues();
-                values.put(Pojo2.Mapper.pid,0);
-                values.put(Pojo2.Mapper.name,"xxx");
-                values.put(Pojo2.Mapper.other,"weee");
+            public void onClick(View view) {            
+                Pojo2 p = new Pojo2();
+                p.name ="opjo2";
+                p.other = new Date();
 //                ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(Pojo.CONTENT_URI);
 //                builder.withValues(values);
 //                ContentProviderOperation operation = builder.build();
 
                 long start = System.currentTimeMillis();
-                Uri uri  = getContentResolver().insert(Pojo2.CONTENT_URI,values);
+                Uri uri = null;
+				try {
+					uri = getContentResolver().insert(Pojo2.CONTENT_URI,ObjectProcessor.getContentValues(p));
+				} catch (Exception e) {
+					Log.e(tag,"Error ",e);
+				}
 //                getContentResolver().bulkInsert(Pojo.CONTENT_URI,contentValues.toArray(new ContentValues[contentValues.size()]));
 //                base.addBatchToTable("co.qchan.db",contentValues);
                 long time = System.currentTimeMillis() - start;
