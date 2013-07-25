@@ -61,9 +61,10 @@ public class MainActivity extends Activity {
   
                     
                     try {
-                        Pojo2 p2 = new Pojo2();
+                    	ObjectProcessor op = new ObjectProcessor(null);
+                        Pojo p2 = new Pojo();
                         Log.d(tag,"was: " + p2);
-						ObjectProcessor.createDummyInstance(p2);
+                        op.createTable(p2.getClass().getName(),p2.TABLE);
 						Log.d(tag,"now: " + p2);
 					} catch (Exception e) {
 						Log.d(tag,"error: " ,e);
