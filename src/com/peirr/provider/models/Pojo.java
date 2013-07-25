@@ -37,10 +37,10 @@ import com.peirr.provider.sqlite.annotations.Provide;
  */
 public class Pojo extends ObjectTable {
 
-    @Column(n = Pojo.Mapper.pid,e=false)
+    @Column(n="pid",e=false)
     private long pid;
     
-    @Column(n = Pojo.Mapper.name,e =false)
+    @Column(n="name",e =false)
     private String name;
     
     @Provide(BaseProvider.PROVIDE_TABLE)

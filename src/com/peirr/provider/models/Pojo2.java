@@ -63,5 +63,14 @@ public class Pojo2 extends ObjectTable {
         public static final String date = "date";
     }
 
+	@Override
+	public String toString() {
+		return "Pojo2 [pid=" + pid + ", name=" + name + ", other=" + other
+				+ "]";
+	}
+
+    
+    
+    
 
 }

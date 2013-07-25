@@ -54,6 +54,15 @@ public class ObjectProcessor {
 	protected SQLiteDatabase db;
 	protected SecretKey k;
 	static String tag = ObjectProcessor.class.getSimpleName();
+	
+	
+	public static final String TEST_STRING = "SSSS";
+	public static final int TEST_INTEGER = 1000;
+	public static final long TEST_LONG = 1111l;
+	public static final boolean TEST_BOOLEAN = true;
+	public static final float TEST_FLOAT = 0.22f;
+	public static final float TEST_DOUBLE = 0.55555f;
+	public static final Date TEST_DATE = new Date(123456);
 
 	public ObjectProcessor(SecretKey k) {
 		this.k = k;
@@ -221,11 +230,25 @@ public class ObjectProcessor {
 
 
 	public  void decryptObject(Object obj){
-		Field[] fields = null;
+		List<Field> fields = new ArrayList<Field>();
+
 		Class<?> clazz;
 		try {
 			clazz = Class.forName(obj.getClass().getName());
-			fields = clazz.getFields();
+			Field[] privateFields = clazz.getDeclaredFields();
+			Field[] publicFields = clazz.getFields();
+			if(privateFields != null){
+				for(Field pf:privateFields){
+					fields.add(pf);
+				}
+			}
+			if(publicFields != null){
+				for(Field pf:publicFields){
+					if(!fields.contains(pf)){
+						fields.add(pf);
+					}
+				}
+			}
 			Class<?> cls = obj.getClass();
 			for (Field field : fields) {
 				Annotation annotation = field.getAnnotation(Column.class);
@@ -246,17 +269,77 @@ public class ObjectProcessor {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
 		} catch (NoSuchFieldException e) {
-			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
 		} catch (IllegalArgumentException e) {
-			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
 		} catch (IllegalAccessException e) {
-			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
 		} catch (Exception e) {
-			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+		}
+	}
+	
+	
+	
+	/**
+	 * you pass it and instance of any object & this class creates dummy data for the annotated fields marked with {@linkplain Column} annotation
+	 * @param obj
+	 * @throws Exception
+	 */
+	public static void createDummyInstance(Object obj) throws Exception{
+		//        LOG.d(tag,"getContentValues: " + obj);
+		List<Field> fields = new ArrayList<Field>();
+		Class<?> clazz = Class.forName(obj.getClass().getName());
+		Class<?> cls = obj.getClass();
+
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
 		}
 
+		for (Field field : fields) {
+			Annotation annotation = field.getAnnotation(Column.class);
+			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
+				if ((annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
+					Field isf = cls.getDeclaredField(field.getName());
+					if(isf.getModifiers() == Modifier.PRIVATE){
+						isf.setAccessible(true);
+					}
+					if (String.class.isAssignableFrom(field.getType())) {
+						isf.set(obj,TEST_STRING);
+					}else if(field.getType() == Integer.TYPE){
+						isf.set(obj,TEST_INTEGER);
+					}else if (field.getType() == Long.TYPE) {
+						isf.set(obj,TEST_LONG);
+					}else if (field.getType() == Boolean.TYPE) {
+						isf.set(obj,TEST_BOOLEAN);
+					}else if (field.getType() == Float.TYPE) {
+						isf.set(obj,TEST_FLOAT);
+					}else if (field.getType() == Double.TYPE) {
+						isf.set(obj,TEST_DOUBLE);
+					}else if(Date.class.isAssignableFrom(field.getType())){
+						isf.set(obj,TEST_DATE);
+					}
+					if(isf.getModifiers() == Modifier.PRIVATE){
+						isf.setAccessible(false);
+					}
+
+				}
+
+			}
+		}
 	}
 
 
