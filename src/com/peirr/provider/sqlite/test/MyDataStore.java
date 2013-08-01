@@ -5,6 +5,7 @@ import java.util.Map;
 
 import android.content.Context;
 
+import com.peirr.provider.models.ParentData;
 import com.peirr.provider.models.Pojo;
 import com.peirr.provider.models.Pojo2;
 import com.peirr.provider.sqlite.BaseDataStore;
@@ -20,6 +21,7 @@ public class MyDataStore extends BaseDataStore {
 		Map<String,Object> objects = new HashMap<String,Object>();
 		objects.put(Pojo.TABLE, new Pojo());
 		objects.put(Pojo2.TABLE, new Pojo2());
+		objects.put(ParentData.TABLE, new ParentData());
 		return objects;
 	}
 }

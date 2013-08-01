@@ -18,22 +18,6 @@
  */
 package com.peirr.provider.sqlite.annotations;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.util.Log;
-
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-
-import com.peirr.provider.sqlite.BaseProvider;
-import com.peirr.provider.sqlite.ProviderObjectValue;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -44,6 +28,22 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.util.Log;
+
+import com.peirr.provider.sqlite.BaseProvider;
+import com.peirr.provider.sqlite.ProviderObjectValue;
 
 /**
  * This processes the Annotations on the Provider enabled classes
@@ -54,8 +54,6 @@ public class ObjectProcessor {
 	protected SQLiteDatabase db;
 	protected SecretKey k;
 	static String tag = ObjectProcessor.class.getSimpleName();
-	
-	
 	public static final String TEST_STRING = "SSSS";
 	public static final int TEST_INTEGER = 1000;
 	public static final long TEST_LONG = 1111l;
@@ -86,6 +84,9 @@ public class ObjectProcessor {
 		Class<?> clazz = Class.forName(className);
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
+
+		List<Class<?>> mergeFields = new ArrayList<Class<?>>(); //list of all merge fields
+
 		if(privateFields != null){
 			for(Field pf:privateFields){
 				fields.add(pf);
@@ -134,6 +135,12 @@ public class ObjectProcessor {
 				}
 			}
 
+			if (!Modifier.isStatic(field.getModifiers()) && (field.getAnnotation(ColumnMerge.class) != null)) {
+				Annotation mannotation = field.getAnnotation(ColumnMerge.class);
+				ColumnMerge cm = (ColumnMerge) mannotation;
+				mergeFields.add(cm.c());
+			}
+
 			Annotation annotationAtr = field.getAnnotation(Index.class);
 			if (annotationAtr != null) {
 				if (annotationAtr instanceof Index) {
@@ -146,26 +153,106 @@ public class ObjectProcessor {
 				firstField = false;
 			}
 		}
+
+		if(mergeFields.size() > 0){
+			int prefix = 0;
+			for(Class<?> c:mergeFields){
+				prefix++;
+				queryBuilder.append(" , " +getFields(c.getName(),prefix));
+			}
+		}
+
 		queryBuilder.append(");");
 		String query = queryBuilder.toString();
 		Log.d(tag, "TABLE CREATION: " + query);
 		db.execSQL(query);
 	}
 
+	/**
+	 * gets the database fields from this object, but not the primary key fields if they do exists
+	 * @param className
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public static String getFields(String className,Integer prefix) throws ClassNotFoundException {
+		//		Log.d(tag,"getFields [class:"+className+"]");
+		String columns = null;
+		List<Field> fields = new ArrayList<Field>();
+		StringBuilder queryBuilder = new StringBuilder();
+		Class<?> clazz = Class.forName(className);
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
+		}
+		//		queryBuilder.append("CREATE TABLE " + table + " (");
+		boolean firstField = true;
+		boolean added = false;
+		for (Field field : fields) {
+			Annotation annotation = field.getAnnotation(Column.class);
+			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null) && (annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
+				if (!firstField) {
+					queryBuilder.append(", ");
+				}
+				if (annotation instanceof Column) {
+					Column col = (Column)annotation;
+					queryBuilder.append(col.n() + "" + (prefix!=null?prefix:"") + " ");
+					added = true;
+				}
+
+				if (String.class.isAssignableFrom(field.getType())) {
+					queryBuilder.append("TEXT");
+				}
+
+				if (field.getType() == Integer.TYPE) {
+					queryBuilder.append("INTEGER");
+				}else if (field.getType() == Long.TYPE) {
+					queryBuilder.append("INTEGER");
+				}else if (field.getType() == Boolean.TYPE) {
+					queryBuilder.append("INTEGER");
+				}else if (field.getType() == Float.TYPE) {
+					queryBuilder.append("REAL");
+				}else if (field.getType() == Double.TYPE) {
+					queryBuilder.append("REAL");
+				}else if(Date.class.isAssignableFrom(field.getType())){
+					queryBuilder.append("INTEGER");
+				}
+			}
+
+			if(added){
+				firstField = false;
+			}
+		}
+		//		queryBuilder.append(");");
+		columns = queryBuilder.toString();
+		//		Log.d(tag,columns);
+		return columns;
+	}
 
 	/**
 	 * Creates a {@link android.content.ContentValues} instance for the given Class that uses the {@link Column} annotation to define fields.
 	 * @param obj
+	 * @param includePrimary - if true, then include the primary key as part of the content values
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws NoSuchFieldException
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static ContentValues getContentValues(Object obj) throws Exception{
-		//        LOG.d(tag,"getContentValues: " + obj);
+	public static ContentValues getContentValues(Object obj,boolean... includePrimary) throws Exception{
+		Log.d(tag,"getContentValues: " + obj);
 		ContentValues cv =  new ContentValues();
 		List<Field> fields = new ArrayList<Field>();
+		List<Object> mergeFields = new ArrayList<Object>();//list of all merged fields
 		Class<?> clazz = Class.forName(obj.getClass().getName());
 		Class<?> cls = obj.getClass();
 
@@ -221,20 +308,44 @@ public class ObjectProcessor {
 					}
 
 				}
+			}
 
+			if (!Modifier.isStatic(field.getModifiers()) && (field.getAnnotation(ColumnMerge.class) != null)) {
+				Object o = field.get(obj);
+				if(o != null){
+					mergeFields.add(o);
+				}
 			}
 		}
-				Log.d(tag,"CONTENT CREATION: " + cv);
+
+		if(mergeFields.size() > 0){
+			int prefix = 0;
+			for(Object o:mergeFields){
+				prefix++;
+				if(o != null){
+					ContentValues values = getContentValues(o,false);
+					for(Map.Entry<String, Object> kv:values.valueSet()){
+						cv.put(kv.getKey()+prefix,String.valueOf(kv.getValue()));
+				     }
+				}
+			}
+		}	
+		//		Log.d(tag,"CONTENT VALUES: " + cv);
 		return cv;
 	}
 
 
+
+
+
 	public  void decryptObject(Object obj){
 		List<Field> fields = new ArrayList<Field>();
-
 		Class<?> clazz;
+
+
 		try {
 			clazz = Class.forName(obj.getClass().getName());
+			Class<?> cls = obj.getClass();
 			Field[] privateFields = clazz.getDeclaredFields();
 			Field[] publicFields = clazz.getFields();
 			if(privateFields != null){
@@ -249,7 +360,6 @@ public class ObjectProcessor {
 					}
 				}
 			}
-			Class<?> cls = obj.getClass();
 			for (Field field : fields) {
 				Annotation annotation = field.getAnnotation(Column.class);
 				if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
@@ -269,20 +379,73 @@ public class ObjectProcessor {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
 		} catch (NoSuchFieldException e) {
-			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
 		} catch (IllegalArgumentException e) {
-			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
 		} catch (IllegalAccessException e) {
-			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
 		} catch (Exception e) {
-			//			Log.e(tag,"ERROR: " + e.getMessage() ,e);
+			//			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
 		}
+
 	}
-	
-	
-	
+
+
+
+
+
+	public static ProviderObjectValue getProviderValues(Object obj) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+		//        LOG.d(tag,"getContentValues: " + obj);
+		ProviderObjectValue pv =  new ProviderObjectValue();
+		List<Field> fields = new ArrayList<Field>();
+		Class<?> clazz = Class.forName(obj.getClass().getName());
+		Class<?> cls = obj.getClass();
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
+		}
+		for (Field field : fields) {
+			Annotation annotation = field.getAnnotation(Provide.class);
+			if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
+				if ((annotation instanceof Provide)) {
+					Provide col = (Provide)annotation;
+					Field isf = cls.getDeclaredField(field.getName());
+					switch (col.value()){
+						case BaseProvider.PROVIDE_TABLE:
+							pv.TABLE = (String) isf.get(obj);
+							break;
+						case BaseProvider.PROVIDE_KEY:
+							pv.KEY = (String) isf.get(obj);
+							break;
+						case BaseProvider.PROVIDE_URI:
+							pv.URI = (Uri) isf.get(obj);
+							break;
+					}
+
+				}
+
+			}
+		}
+		pv.ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE  + "/" + pv.TABLE;
+		pv.TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + pv.TABLE;
+		//		LOG.d(tag,"CONTENT CREATION: " + cv);
+		return pv;
+	}
+
+
+
 	/**
 	 * you pass it and instance of any object & this class creates dummy data for the annotated fields marked with {@linkplain Column} annotation
 	 * @param obj
@@ -341,46 +504,5 @@ public class ObjectProcessor {
 			}
 		}
 	}
-
-
-
-
-
-	public static ProviderObjectValue getProviderValues(Object obj) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-		//        LOG.d(tag,"getContentValues: " + obj);
-		ProviderObjectValue pv =  new ProviderObjectValue();
-		Field[] fields = null;
-		Class<?> clazz = Class.forName(obj.getClass().getName());
-		fields = clazz.getFields();
-		Class<?> cls = obj.getClass();
-
-		for (Field field : fields) {
-			Annotation annotation = field.getAnnotation(Provide.class);
-			if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
-				if ((annotation instanceof Provide)) {
-					Provide col = (Provide)annotation;
-					Field isf = cls.getDeclaredField(field.getName());
-					switch (col.value()){
-						case BaseProvider.PROVIDE_TABLE:
-							pv.TABLE = (String) isf.get(obj);
-							break;
-						case BaseProvider.PROVIDE_KEY:
-							pv.KEY = (String) isf.get(obj);
-							break;
-						case BaseProvider.PROVIDE_URI:
-							pv.URI = (Uri) isf.get(obj);
-							break;
-					}
-
-				}
-
-			}
-		}
-		pv.ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE  + "/" + pv.TABLE;
-		pv.TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + pv.TABLE;
-		//		LOG.d(tag,"CONTENT CREATION: " + cv);
-		return pv;
-	}
-
 
 }
