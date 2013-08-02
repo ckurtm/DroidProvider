@@ -1,7 +1,7 @@
 package com.peirr.provider.sqlite.test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 
@@ -9,6 +9,7 @@ import com.peirr.provider.models.ParentData;
 import com.peirr.provider.models.Pojo;
 import com.peirr.provider.models.Pojo2;
 import com.peirr.provider.sqlite.BaseDataStore;
+import com.peirr.provider.sqlite.annotations.ObjectTable;
 
 public class MyDataStore extends BaseDataStore {
 
@@ -17,11 +18,11 @@ public class MyDataStore extends BaseDataStore {
 	}
 
 	@Override
-	public Map<String,Class<?>> getObjects() {
-		Map<String,Class<?>> objects = new HashMap<String,Class<?>>();
-		objects.put(Pojo.TABLE,Pojo.class);
-		objects.put(Pojo2.TABLE,Pojo2.class);
-		objects.put(ParentData.TABLE,ParentData.class);
-		return objects;
+	public List<Class<? extends ObjectTable>> getDefinedClasses() {
+		List<Class<? extends ObjectTable>> classes = new ArrayList<Class<? extends ObjectTable>>();
+		classes.add(Pojo.class);
+		classes.add(Pojo2.class);
+		classes.add(ParentData.class);
+		return classes;
 	}
 }

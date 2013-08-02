@@ -401,7 +401,56 @@ public class ObjectProcessor {
 	}
 
 
+	/**
+	 * This gets the details about the class, i.e. the table name, the primary key
+	 * @param clazz
+	 * @return a string array [0] = table name, [1] = key
+	 * @throws NoSuchFieldException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public static String[] getMetaDaTa(Class<?> clazz) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+		Log.d(tag,"getMetadata() " + clazz.getName());
+		String[] metadata = new String[2];
+		List<Field> fields = new ArrayList<Field>();
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
+		}
+		for (Field field : fields) {
+			Annotation annotation = field.getAnnotation(Provide.class);
+			if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
+				if ((annotation instanceof Provide)) {
+					Provide col = (Provide)annotation;
+					Field isf = clazz.getDeclaredField(field.getName());
+					switch(col.value()){
+						case BaseProvider.PROVIDE_TABLE:
+							metadata[0] = (String) isf.get(clazz);
+							Log.d(tag," .. table: " + metadata[0]);
+							break;
+						case BaseProvider.PROVIDE_KEY:
+							metadata[1] = (String) isf.get(clazz);
+							Log.d(tag," .. key  : " + metadata[1]);
+							break;
+						case BaseProvider.PROVIDE_URI:
+							break;
+					}
+				}
 
+			}
+		}
+		return metadata;
+	}
 
 
 	public static ProviderObjectValue getProviderValues(Class<?> clazz) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {

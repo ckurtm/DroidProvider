@@ -24,6 +24,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.peirr.provider.sqlite.annotations.ObjectProcessor;
+import com.peirr.provider.sqlite.annotations.ObjectTable;
 
 /**
  * This is the database util class for handling reads & writes to app sqlite db
@@ -52,10 +54,24 @@ import com.peirr.provider.sqlite.annotations.ObjectProcessor;
  */
 public abstract class BaseDataStore extends SQLiteSecureHelper {
 	private List<ProviderObjectValue> objectValues = new ArrayList<ProviderObjectValue>();	
-	public abstract Map<String,Class<?>> getObjects();
+	public abstract List<Class<? extends ObjectTable>> getDefinedClasses();
+
+
 	String tag = BaseDataStore.class.getSimpleName();
 	public List<ProviderObjectValue> getObjectValues() {
 		return objectValues;
+	}
+
+	public Map<String,Class<?>> getDefinedObjects() throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+		Map<String,Class<?>> objects = new HashMap<String,Class<?>>();
+		List<Class<? extends ObjectTable>> definedClasses = getDefinedClasses();
+//		Log.d(tag,"defined classes: " + definedClasses.size());
+		for(Class<?> clazz:definedClasses){
+			String[] data = ObjectProcessor.getMetaDaTa(clazz);
+			objects.put(data[0],clazz);
+		}
+//		Log.d(tag,"defined objects: " + objects.size());
+		return objects;
 	}
 
 	public BaseDataStore(Context context) {
@@ -64,26 +80,8 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 			if(objectValues.size() == 0){
 				createObjectValues();
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			Log.e(tag,e.getMessage(),e);
-		} catch (NoSuchFieldException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (NoSuchPaddingException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (InvalidAlgorithmParameterException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (UnsupportedEncodingException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (IllegalBlockSizeException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (BadPaddingException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (NoSuchAlgorithmException e) {
-			Log.e(tag, e.getMessage(), e);
-		} catch (InvalidKeyException e) {
-			Log.e(tag, e.getMessage(), e);
 		}
 	}
 
@@ -92,10 +90,9 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 		super.onCreate(db);
 		try {
 			for(ProviderObjectValue value:getObjectValues()){
-				
-				proc.createTable(getObjects().get(value.TABLE),value.TABLE);
+				proc.createTable(getDefinedObjects().get(value.TABLE),value.TABLE);
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			Log.e(tag, e.getMessage(), e);
 		}
 	}
@@ -115,11 +112,11 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 	 * @throws IllegalBlockSizeException
 	 */
 	public void createObjectValues() throws NoSuchAlgorithmException, NoSuchFieldException, InvalidKeyException, IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, ClassNotFoundException, IllegalBlockSizeException {
-		Log.d(tag,"createObjectValues()");
+//		Log.d(tag,"createObjectValues()");
 		objectValues.clear();
 		int i = 0;
-		for(String key: getObjects().keySet()){
-			ProviderObjectValue pv = ObjectProcessor.getProviderValues(getObjects().get(key));
+		for(String key: getDefinedObjects().keySet()){
+			ProviderObjectValue pv = ObjectProcessor.getProviderValues(getDefinedObjects().get(key));
 			Log.d(tag,"[]+ " + pv);
 			pv.ONE = (i+2) -1;
 			pv.MANY = (i+2);
@@ -128,9 +125,9 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 		}
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Add a new row into the provided table
 	 * @param values - the data to insert
