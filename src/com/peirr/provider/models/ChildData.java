@@ -36,6 +36,13 @@ public class ChildData extends ObjectTable {
 
     }
 
+
+	@Override
+	public String toString() {
+		return "ChildData [childField1=" + childField1 + ", childField2="
+				+ childField2 + ", childField3=" + childField3 + "]";
+	}
+
     
 
 }

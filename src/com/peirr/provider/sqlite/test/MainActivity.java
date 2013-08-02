@@ -77,9 +77,20 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
             	 Cursor c = getContentResolver().query(ParentData.CONTENT_URI,null,null,null,null);
-            	 
-            	 
-                 msg2.setText("" + c.getCount());
+            	 c.moveToNext();
+                 ParentData p;
+				try {
+					p = ObjectProcessor.getPersistValue(c,ParentData.class);
+					Log.d(tag,"got: " + p);
+					 msg2.setText("" + p);
+				} catch (InstantiationException e) {
+					Log.e(tag,"",e);
+				} catch (IllegalAccessException e) {
+					Log.e(tag,"",e);
+				} catch (NoSuchFieldException e) {
+					Log.e(tag,"",e);
+				}
+            	
             }
         });
     }

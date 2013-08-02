@@ -101,6 +101,7 @@ public abstract class BaseProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+//    	Log.d(tag,"insert: " + uri);
         int uriType = sURIMatcher.match(uri);
         boolean found = false;
         String table = "";
