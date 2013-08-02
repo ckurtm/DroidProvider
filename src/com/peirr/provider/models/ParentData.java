@@ -51,9 +51,8 @@ public class ParentData extends ObjectTable {
 	@Override
 	public String toString() {
 		return "ParentData [parentField1=" + parentField1 + ", parentField2="
-				+ parentField2 + ", details1=" + details1 + "]";
+				+ parentField2 + ", details1=" + details1 + ", _id=" + _id
+				+ "]";
 	}
-    
-    
 
 }

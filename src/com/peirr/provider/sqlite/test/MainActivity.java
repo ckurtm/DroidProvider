@@ -37,52 +37,54 @@ import com.peirr.provider.models.Pojo;
 import com.peirr.provider.sqlite.annotations.ObjectProcessor;
 
 public class MainActivity extends Activity {
-    String tag = MainActivity.class.getSimpleName();
-    TextView msg1,msg2;
-    List<ContentValues> contentValues = new ArrayList<ContentValues>();
-//    BaseSQLite base;
+	String tag = MainActivity.class.getSimpleName();
+	TextView msg1,msg2;
+	List<ContentValues> contentValues = new ArrayList<ContentValues>();
+	//    BaseSQLite base;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        msg1 = (TextView)findViewById(R.id.msg1);
-        msg2 = (TextView)findViewById(R.id.msg2);
-//        base = new BaseSQLite(this);
-        for(int i=0;i<30000;i++){
-            ContentValues values = new ContentValues();
-            values.put(Pojo.Mapper.pid,0);
-            values.put(Pojo.Mapper.name,"xxx");
-            contentValues.add(values);
-        }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		msg1 = (TextView)findViewById(R.id.msg1);
+		msg2 = (TextView)findViewById(R.id.msg2);
+		//        base = new BaseSQLite(this);
+		for(int i=0;i<30000;i++){
+			ContentValues values = new ContentValues();
+			values.put(Pojo.Mapper.pid,0);
+			values.put(Pojo.Mapper.name,"xxx");
+			contentValues.add(values);
+		}
 
-        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    try {
-                    	ChildData c1 = new ChildData();
-                		ObjectProcessor.createDummyInstance(c1);
-                		ParentData pd = new ParentData("f1",3.0f,c1);
-    					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ObjectProcessor.getContentValues(pd));
-    					Log.d(tag,"[]+ " + uri);
-					} catch (Exception e) {
-						Log.d(tag,"error: " ,e);
-					}
-                    
-            }
-        });
-
-
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            	 Cursor c = getContentResolver().query(ParentData.CONTENT_URI,null,null,null,null);
-            	 c.moveToNext();
-                 ParentData p;
+		findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
 				try {
-					p = ObjectProcessor.getPersistValue(c,ParentData.class);
-					Log.d(tag,"got: " + p);
-					 msg2.setText("" + p);
+					ChildData c1 = new ChildData();
+					ObjectProcessor.createDummyInstance(c1);
+					ParentData pd = new ParentData("f1",3.0f,c1);
+					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ObjectProcessor.getContentValues(pd));
+					Log.d(tag,"[]+ " + uri);
+				} catch (Exception e) {
+					Log.d(tag,"error: " ,e);
+				}
+
+			}
+		});
+
+
+		findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Cursor c = getContentResolver().query(ParentData.CONTENT_URI,null,null,null,null);
+
+				List<ParentData> list;
+				try {
+					list = ObjectProcessor.getPersistValues(c,ParentData.class);
+					for(ParentData parent:list){
+						Log.d(tag,"got: " + parent);
+					}
+					msg2.setText("" + list.size());
 				} catch (InstantiationException e) {
 					Log.e(tag,"",e);
 				} catch (IllegalAccessException e) {
@@ -90,10 +92,10 @@ public class MainActivity extends Activity {
 				} catch (NoSuchFieldException e) {
 					Log.e(tag,"",e);
 				}
-            	
-            }
-        });
-    }
+
+			}
+		});
+	}
 
 
 }

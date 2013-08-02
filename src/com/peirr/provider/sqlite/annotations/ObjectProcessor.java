@@ -37,6 +37,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import android.annotation.SuppressLint;
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -255,7 +256,7 @@ public class ObjectProcessor {
 		Log.d(tag,"getContentValues: " + obj);
 		ContentValues cv =  new ContentValues();
 		List<Field> fields = new ArrayList<Field>();
-		List<FieldValues> mergeFields = new ArrayList<FieldValues>();//list of all merged fields
+		List<FieldValue> mergeFields = new ArrayList<FieldValue>();//list of all merged fields
 		Class<?> clazz = Class.forName(obj.getClass().getName());
 		Class<?> cls = obj.getClass();
 
@@ -321,14 +322,14 @@ public class ObjectProcessor {
 				Object o = field.get(obj);
 				ColumnMerge cmerge = field.getAnnotation(ColumnMerge.class);
 				if(o != null){
-					mergeFields.add(new FieldValues(o, cmerge.c()));
+					mergeFields.add(new FieldValue(o,cmerge.c(),null));
 				}
 			}
 		}
 
 		if(mergeFields.size() > 0){
 //			int prefix = 0;
-			for(FieldValues o:mergeFields){
+			for(FieldValue o:mergeFields){
 //				prefix++;
 				if(o != null){
 					ContentValues values = getContentValues(o.object,false);
@@ -501,14 +502,112 @@ public class ObjectProcessor {
 	}
 
 	
-	
+	/**
+	 * This gets a row from the table for the given class T using the given {@link Cursor}
+	 * @param cursor
+	 * @param clazz
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 */
 	public static <T extends ObjectTable> T getPersistValue(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
 		T object = clazz.newInstance();
 		List<Field> fields = new ArrayList<Field>();
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
-		List<Class<?>> mergeFields = new ArrayList<Class<?>>(); //list of all merge fields
+		List<FieldValue> mergeFields = new ArrayList<FieldValue>(); //list of all merge fields
 
+		if(privateFields != null){
+			for(Field pf:privateFields){
+				fields.add(pf);
+			}
+		}
+		if(publicFields != null){
+			for(Field pf:publicFields){
+				if(!fields.contains(pf)){
+					fields.add(pf);
+				}
+			}
+		}
+
+		for (Field field : fields) {
+			Annotation annotation = field.getAnnotation(Column.class);
+			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
+				if ((annotation instanceof Column)) {
+					Column col = (Column)annotation;
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(true);
+					}
+					if (String.class.isAssignableFrom(field.getType())) {
+						field.set(object,cursor.getString(cursor.getColumnIndex(col.n())));
+					}else if(field.getType() == Integer.TYPE){
+						field.set(object,cursor.getInt(cursor.getColumnIndex(col.n())));
+					}else if (field.getType() == Long.TYPE) {
+						field.set(object,cursor.getLong(cursor.getColumnIndex(col.n())));
+					}else if (field.getType() == Boolean.TYPE) {
+						field.set(object,cursor.getInt(cursor.getColumnIndex(col.n()))>0?true:false);
+					}else if (field.getType() == Float.TYPE) {
+						field.set(object,cursor.getFloat(cursor.getColumnIndex(col.n())));
+					}else if (field.getType() == Double.TYPE) {
+						field.set(object,cursor.getDouble(cursor.getColumnIndex(col.n())));
+					}else if(Date.class.isAssignableFrom(field.getType())){
+						field.set(object,new Date(cursor.getLong(cursor.getColumnIndex(col.n()))));
+					}
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(false);
+					}
+				}
+			}
+			//found a merge column, need to instatate the object before we can inject data into it.
+			if (!Modifier.isStatic(field.getModifiers()) && (field.getAnnotation(ColumnMerge.class) != null)) {
+				ColumnMerge cmerge = field.getAnnotation(ColumnMerge.class);
+				mergeFields.add(new FieldValue(null,cmerge.c(), field));
+			}
+		}
+		
+		
+		for(FieldValue fv:mergeFields){
+			Object childObj = getChildPersistValue(cursor,fv.clazz);
+			fv.field.set(object, childObj);
+		}
+		return object;
+	}
+	
+	
+	/**
+	 * Get a List<T> from the DB using {@link ContentProvider} for class T
+	 * @param cursor
+	 * @param clazz
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 */
+	public static <T extends ObjectTable> List<T> getPersistValues(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+	   List<T> list = new ArrayList<T>();
+	   while(cursor.moveToNext()){
+		   T obj = getPersistValue(cursor, clazz);
+		   list.add(obj);
+	   }
+	   return list;
+	}
+	
+	/**
+	 * Same as {@link ObjectProcessor::getPersistValue} but sets the field values expect for the _id field.
+	 * This is used to instantiate fields annotated with {@link ColumnMerge} 
+	 * @param cursor
+	 * @param clazz
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 */
+	public static <T> T getChildPersistValue(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+		T object = clazz.newInstance();
+		List<Field> fields = new ArrayList<Field>();
+		Field[] privateFields = clazz.getDeclaredFields();
+		Field[] publicFields = clazz.getFields();
 		if(privateFields != null){
 			for(Field pf:privateFields){
 				fields.add(pf);
@@ -527,39 +626,35 @@ public class ObjectProcessor {
 			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
 				if ((annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
 					Column col = (Column)annotation;
-					Field isf = clazz.getDeclaredField(field.getName());
-					if(isf.getModifiers() == Modifier.PRIVATE){
-						isf.setAccessible(true);
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(true);
 					}
 					if (String.class.isAssignableFrom(field.getType())) {
-						isf.set(object,cursor.getString(cursor.getColumnIndex(col.n())));
+						field.set(object,cursor.getString(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
 					}else if(field.getType() == Integer.TYPE){
-						isf.set(object,cursor.getInt(cursor.getColumnIndex(col.n())));
+						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
 					}else if (field.getType() == Long.TYPE) {
-						isf.set(object,cursor.getLong(cursor.getColumnIndex(col.n())));
+						field.set(object,cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
 					}else if (field.getType() == Boolean.TYPE) {
-						isf.set(object,cursor.getInt(cursor.getColumnIndex(col.n()))>0?true:false);
+						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n()))>0?true:false);
 					}else if (field.getType() == Float.TYPE) {
-						isf.set(object,cursor.getFloat(cursor.getColumnIndex(col.n())));
+						field.set(object,cursor.getFloat(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
 					}else if (field.getType() == Double.TYPE) {
-						isf.set(object,cursor.getDouble(cursor.getColumnIndex(col.n())));
+						field.set(object,cursor.getDouble(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
 					}else if(Date.class.isAssignableFrom(field.getType())){
-						isf.set(object,new Date(cursor.getLong(cursor.getColumnIndex(col.n()))));
+						field.set(object,new Date(cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n()))));
 					}
-					if(isf.getModifiers() == Modifier.PRIVATE){
-						isf.setAccessible(false);
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(false);
 					}
 				}
-			}
-			//found a merge column, need to instatate the object before we can inject data into it.
-			if (!Modifier.isStatic(field.getModifiers()) && (field.getAnnotation(ColumnMerge.class) != null)) {
-				ColumnMerge cmerge = field.getAnnotation(ColumnMerge.class);
-				mergeFields.add(cmerge.c());
 			}
 		}
 		
 		return object;
 	}
+	
+	
 	
 
 
@@ -591,27 +686,26 @@ public class ObjectProcessor {
 			Annotation annotation = field.getAnnotation(Column.class);
 			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
 				if ((annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
-					Field isf = clazz.getDeclaredField(field.getName());
-					if(isf.getModifiers() == Modifier.PRIVATE){
-						isf.setAccessible(true);
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(true);
 					}
 					if (String.class.isAssignableFrom(field.getType())) {
-						isf.set(obj,TEST_STRING);
+						field.set(obj,TEST_STRING);
 					}else if(field.getType() == Integer.TYPE){
-						isf.set(obj,TEST_INTEGER);
+						field.set(obj,TEST_INTEGER);
 					}else if (field.getType() == Long.TYPE) {
-						isf.set(obj,TEST_LONG);
+						field.set(obj,TEST_LONG);
 					}else if (field.getType() == Boolean.TYPE) {
-						isf.set(obj,TEST_BOOLEAN);
+						field.set(obj,TEST_BOOLEAN);
 					}else if (field.getType() == Float.TYPE) {
-						isf.set(obj,TEST_FLOAT);
+						field.set(obj,TEST_FLOAT);
 					}else if (field.getType() == Double.TYPE) {
-						isf.set(obj,TEST_DOUBLE);
+						field.set(obj,TEST_DOUBLE);
 					}else if(Date.class.isAssignableFrom(field.getType())){
-						isf.set(obj,TEST_DATE);
+						field.set(obj,TEST_DATE);
 					}
-					if(isf.getModifiers() == Modifier.PRIVATE){
-						isf.setAccessible(false);
+					if(field.getModifiers() == Modifier.PRIVATE){
+						field.setAccessible(false);
 					}
 
 				}
@@ -620,13 +714,15 @@ public class ObjectProcessor {
 		}
 	}
 	
-	private static class FieldValues{
+	private static class FieldValue{
 		public Object object;
 		public Class<?> clazz;
-		public FieldValues(Object object, Class<?> clazz) {
-			super();
+		public Field field;
+		
+		public FieldValue(Object object, Class<?> clazz,Field field) {
 			this.object = object;
 			this.clazz = clazz;
+			this.field = field;
 		}
 	}
 
