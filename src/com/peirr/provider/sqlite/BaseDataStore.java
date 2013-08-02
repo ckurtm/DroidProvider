@@ -52,7 +52,7 @@ import com.peirr.provider.sqlite.annotations.ObjectProcessor;
  */
 public abstract class BaseDataStore extends SQLiteSecureHelper {
 	private List<ProviderObjectValue> objectValues = new ArrayList<ProviderObjectValue>();	
-	public abstract Map<String,Object> getObjects();
+	public abstract Map<String,Class<?>> getObjects();
 	String tag = BaseDataStore.class.getSimpleName();
 	public List<ProviderObjectValue> getObjectValues() {
 		return objectValues;
@@ -92,7 +92,8 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 		super.onCreate(db);
 		try {
 			for(ProviderObjectValue value:getObjectValues()){
-				proc.createTable(getObjects().get(value.TABLE).getClass().getName(),value.TABLE);
+				
+				proc.createTable(getObjects().get(value.TABLE),value.TABLE);
 			}
 		} catch (ClassNotFoundException e) {
 			Log.e(tag, e.getMessage(), e);

@@ -18,21 +18,22 @@
  */
 package com.peirr.provider.sqlite.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.peirr.provider.R;
+import com.peirr.provider.models.ChildData;
+import com.peirr.provider.models.ParentData;
 import com.peirr.provider.models.Pojo;
-import com.peirr.provider.models.Pojo2;
 import com.peirr.provider.sqlite.annotations.ObjectProcessor;
 
 public class MainActivity extends Activity {
@@ -58,14 +59,12 @@ public class MainActivity extends Activity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-  
-                    
                     try {
-                    	ObjectProcessor op = new ObjectProcessor(null);
-                        Pojo p2 = new Pojo();
-                        Log.d(tag,"was: " + p2);
-                        op.createTable(p2.getClass().getName(),p2.TABLE);
-						Log.d(tag,"now: " + p2);
+                    	ChildData c1 = new ChildData();
+                		ObjectProcessor.createDummyInstance(c1);
+                		ParentData pd = new ParentData("f1",3.0f,c1);
+    					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ObjectProcessor.getContentValues(pd));
+    					Log.d(tag,"[]+ " + uri);
 					} catch (Exception e) {
 						Log.d(tag,"error: " ,e);
 					}
@@ -76,29 +75,11 @@ public class MainActivity extends Activity {
 
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {            
-                Pojo2 p = new Pojo2();
-                p.name ="opjo2";
-                p.other = new Date();
-//                ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(Pojo.CONTENT_URI);
-//                builder.withValues(values);
-//                ContentProviderOperation operation = builder.build();
-
-                long start = System.currentTimeMillis();
-                Uri uri = null;
-				try {
-					uri = getContentResolver().insert(Pojo2.CONTENT_URI,ObjectProcessor.getContentValues(p));
-				} catch (Exception e) {
-					Log.e(tag,"Error ",e);
-				}
-//                getContentResolver().bulkInsert(Pojo.CONTENT_URI,contentValues.toArray(new ContentValues[contentValues.size()]));
-//                base.addBatchToTable("co.qchan.db",contentValues);
-                long time = System.currentTimeMillis() - start;
-                Log.d(tag,"time: " + time);
-//                int rows = getContentResolver().delete(Pojo2.CONTENT_URI,Pojo.ObjectMapper._ID + ">?",new String[]{"5"});
-//                int rows = getContentResolver().update(Pojo2.CONTENT_URI,values,Pojo2.ObjectMapper._ID + ">?",new String[]{"100"});
-//               Cursor c = getContentResolver().query(Pojo2.CONTENT_URI,null,Pojo.ObjectMapper._ID + ">?",new String[]{"100"},null);
-                msg2.setText("" + uri);
+            public void onClick(View view) {
+            	 Cursor c = getContentResolver().query(ParentData.CONTENT_URI,null,null,null,null);
+            	 
+            	 
+                 msg2.setText("" + c.getCount());
             }
         });
     }

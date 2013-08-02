@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -38,6 +39,7 @@ import javax.crypto.SecretKey;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
@@ -77,14 +79,12 @@ public class ObjectProcessor {
 	 * @throws ClassNotFoundException
 	 */
 	@SuppressLint("DefaultLocale")
-	public void createTable(String className,String table) throws ClassNotFoundException {
-		Log.d(tag,"createTableFromClass [class:"+className+"][table:"+table+"]");
+	public void createTable(Class<?> clazz,String table) throws ClassNotFoundException {
+		Log.d(tag,"createTableFromClass [class:"+clazz.getName()+"][table:"+table+"]");
 		List<Field> fields = new ArrayList<Field>();
 		StringBuilder queryBuilder = new StringBuilder();
-		Class<?> clazz = Class.forName(className);
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
-
 		List<Class<?>> mergeFields = new ArrayList<Class<?>>(); //list of all merge fields
 
 		if(privateFields != null){
@@ -132,6 +132,8 @@ public class ObjectProcessor {
 					queryBuilder.append("REAL");
 				}else if(Date.class.isAssignableFrom(field.getType())){
 					queryBuilder.append("INTEGER");
+				}else if(BigDecimal.class.isAssignableFrom(field.getType())){
+					queryBuilder.append("REAL");
 				}
 			}
 
@@ -174,7 +176,7 @@ public class ObjectProcessor {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static String getFields(String className,Integer prefix) throws ClassNotFoundException {
+	private static String getFields(String className,Integer prefix) throws ClassNotFoundException {
 		//		Log.d(tag,"getFields [class:"+className+"]");
 		String columns = null;
 		List<Field> fields = new ArrayList<Field>();
@@ -205,7 +207,8 @@ public class ObjectProcessor {
 				}
 				if (annotation instanceof Column) {
 					Column col = (Column)annotation;
-					queryBuilder.append(col.n() + "" + (prefix!=null?prefix:"") + " ");
+//					queryBuilder.append(col.n() + "" + (prefix!=null?prefix:"") + " ");
+					queryBuilder.append(clazz.getSimpleName() + col.n() + " ");
 					added = true;
 				}
 
@@ -252,7 +255,7 @@ public class ObjectProcessor {
 		Log.d(tag,"getContentValues: " + obj);
 		ContentValues cv =  new ContentValues();
 		List<Field> fields = new ArrayList<Field>();
-		List<Object> mergeFields = new ArrayList<Object>();//list of all merged fields
+		List<FieldValues> mergeFields = new ArrayList<FieldValues>();//list of all merged fields
 		Class<?> clazz = Class.forName(obj.getClass().getName());
 		Class<?> cls = obj.getClass();
 
@@ -303,6 +306,10 @@ public class ObjectProcessor {
 						Date date = (Date)isf.get(obj);
 						cv.put(col.n(),date.getTime());
 					}
+					else if(BigDecimal.class.isAssignableFrom(field.getType())){
+						BigDecimal bigDecimal = (BigDecimal)isf.get(obj);
+						cv.put(col.n(),bigDecimal.toEngineeringString());
+					}
 					if(isf.getModifiers() == Modifier.PRIVATE){
 						isf.setAccessible(false);
 					}
@@ -312,20 +319,21 @@ public class ObjectProcessor {
 
 			if (!Modifier.isStatic(field.getModifiers()) && (field.getAnnotation(ColumnMerge.class) != null)) {
 				Object o = field.get(obj);
+				ColumnMerge cmerge = field.getAnnotation(ColumnMerge.class);
 				if(o != null){
-					mergeFields.add(o);
+					mergeFields.add(new FieldValues(o, cmerge.c()));
 				}
 			}
 		}
 
 		if(mergeFields.size() > 0){
-			int prefix = 0;
-			for(Object o:mergeFields){
-				prefix++;
+//			int prefix = 0;
+			for(FieldValues o:mergeFields){
+//				prefix++;
 				if(o != null){
-					ContentValues values = getContentValues(o,false);
+					ContentValues values = getContentValues(o.object,false);
 					for(Map.Entry<String, Object> kv:values.valueSet()){
-						cv.put(kv.getKey()+prefix,String.valueOf(kv.getValue()));
+						cv.put(o.clazz.getSimpleName() + kv.getKey(),String.valueOf(kv.getValue()));
 				     }
 				}
 			}
@@ -396,12 +404,11 @@ public class ObjectProcessor {
 
 
 
-	public static ProviderObjectValue getProviderValues(Object obj) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+	public static ProviderObjectValue getProviderValues(Class<?> clazz) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
 		//        LOG.d(tag,"getContentValues: " + obj);
 		ProviderObjectValue pv =  new ProviderObjectValue();
 		List<Field> fields = new ArrayList<Field>();
-		Class<?> clazz = Class.forName(obj.getClass().getName());
-		Class<?> cls = obj.getClass();
+//		Class<?> clazz = obj.getClass();
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
 		if(privateFields != null){
@@ -421,16 +428,16 @@ public class ObjectProcessor {
 			if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
 				if ((annotation instanceof Provide)) {
 					Provide col = (Provide)annotation;
-					Field isf = cls.getDeclaredField(field.getName());
+					Field isf = clazz.getDeclaredField(field.getName());
 					switch (col.value()){
 						case BaseProvider.PROVIDE_TABLE:
-							pv.TABLE = (String) isf.get(obj);
+							pv.TABLE = (String) isf.get(clazz);
 							break;
 						case BaseProvider.PROVIDE_KEY:
-							pv.KEY = (String) isf.get(obj);
+							pv.KEY = (String) isf.get(clazz);
 							break;
 						case BaseProvider.PROVIDE_URI:
-							pv.URI = (Uri) isf.get(obj);
+							pv.URI = (Uri) isf.get(clazz);
 							break;
 					}
 
@@ -444,6 +451,13 @@ public class ObjectProcessor {
 		return pv;
 	}
 
+	
+	
+	public static <T extends ObjectTable> T getRow(Cursor c,Class<T> type) throws InstantiationException, IllegalAccessException{
+		T obj = type.newInstance();
+		return obj;
+	}
+	
 
 
 	/**
@@ -455,8 +469,6 @@ public class ObjectProcessor {
 		//        LOG.d(tag,"getContentValues: " + obj);
 		List<Field> fields = new ArrayList<Field>();
 		Class<?> clazz = Class.forName(obj.getClass().getName());
-		Class<?> cls = obj.getClass();
-
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
 		if(privateFields != null){
@@ -476,7 +488,7 @@ public class ObjectProcessor {
 			Annotation annotation = field.getAnnotation(Column.class);
 			if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
 				if ((annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
-					Field isf = cls.getDeclaredField(field.getName());
+					Field isf = clazz.getDeclaredField(field.getName());
 					if(isf.getModifiers() == Modifier.PRIVATE){
 						isf.setAccessible(true);
 					}
@@ -502,6 +514,16 @@ public class ObjectProcessor {
 				}
 
 			}
+		}
+	}
+	
+	private static class FieldValues{
+		public Object object;
+		public Class<?> clazz;
+		public FieldValues(Object object, Class<?> clazz) {
+			super();
+			this.object = object;
+			this.clazz = clazz;
 		}
 	}
 

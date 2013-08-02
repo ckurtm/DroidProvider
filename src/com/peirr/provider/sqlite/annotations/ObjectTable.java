@@ -19,6 +19,8 @@
 
 package com.peirr.provider.sqlite.annotations;
 
+import android.net.Uri;
+
 
 /**
  * Base columns required for each provider enabled object->table mapping
@@ -32,7 +34,7 @@ public class ObjectTable {
 	public static int MANY;
 	public static String CONTENT_ITEM_TYPE;
 	public static String CONTENT_TYPE;
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -50,4 +52,5 @@ public class ObjectTable {
 		int result = (int) (_id ^ (_id >>> 32));
 		return result;
 	}
+
 }

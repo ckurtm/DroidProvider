@@ -17,11 +17,11 @@ public class MyDataStore extends BaseDataStore {
 	}
 
 	@Override
-	public Map<String, Object> getObjects() {
-		Map<String,Object> objects = new HashMap<String,Object>();
-		objects.put(Pojo.TABLE, new Pojo());
-		objects.put(Pojo2.TABLE, new Pojo2());
-		objects.put(ParentData.TABLE, new ParentData());
+	public Map<String,Class<?>> getObjects() {
+		Map<String,Class<?>> objects = new HashMap<String,Class<?>>();
+		objects.put(Pojo.TABLE,Pojo.class);
+		objects.put(Pojo2.TABLE,Pojo2.class);
+		objects.put(ParentData.TABLE,ParentData.class);
 		return objects;
 	}
 }

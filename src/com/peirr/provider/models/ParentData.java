@@ -11,17 +11,13 @@ import com.peirr.provider.sqlite.annotations.Provide;
 
 public class ParentData extends ObjectTable {
 	
+	public ParentData() {}
 	
-	public ParentData() {
-	}
-	
-	public ParentData(String parentField1, float parentField2,
-			ChildData details1) {
+	public ParentData(String parentField1, float parentField2,ChildData details1) {
 		this.parentField1 = parentField1;
 		this.parentField2 = parentField2;
 		this.details1 = details1;
 	}
-
 
 	@Column(n = Mapper.PARENTFIELD1,e=false)
 	public String parentField1;

@@ -19,7 +19,7 @@
   -->
 <resources>
 
-    <string name="app_name">peirr-content-provider</string>
+    <string name="app_name">droid-provider</string>
     <string name="action_settings">Settings</string>
     <string name="authority">co.qchan.provider.test</string>
     <string name="empty">####</string>
