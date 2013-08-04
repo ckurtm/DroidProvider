@@ -14,7 +14,7 @@ import android.util.Log;
 
 import com.peirr.provider.sqlite.Config;
 import com.peirr.provider.sqlite.ProviderObjectValue;
-import com.peirr.provider.sqlite.annotations.ObjectProcessor;
+import com.peirr.provider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.sqlite.test.MyDataStore;
 import com.peirr.provider.sqlite.test.MyProvider;
 
