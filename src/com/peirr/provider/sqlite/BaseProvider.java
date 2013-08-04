@@ -48,22 +48,39 @@ public abstract class BaseProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         sqLite = getMyDB();
+        String authority = getAuthority();
         for(ProviderObjectValue pv:sqLite.getObjectValues()){
             Log.d(tag,"pv: " + pv);
-            sURIMatcher.addURI(getAuthority(),pv.TABLE,pv.MANY);
-            sURIMatcher.addURI(getAuthority(),pv.TABLE + "/#",pv.ONE);
+            sURIMatcher.addURI(authority,pv.TABLE,pv.MANY);
+            sURIMatcher.addURI(authority,pv.TABLE + "/#",pv.ONE);
         }
         return true;
     }
     
     public abstract BaseDataStore getMyDB();
-//    {
-//    	return new BaseSQLite(getContext());
-//    }
     
     public static String getAuthority(){
+//    	Context ctx = DroidProvider.getContext();
+//    	Resources resources = ctx.getResources();
+//    	Properties properties = null;
+//    	try {
+//    	    InputStream rawResource = resources.openRawResource(R.raw.droid_provider);
+//    	    properties = new Properties();
+//    	    properties.load(rawResource);
+//    	    Log.d(tag,"properties: " + properties);
+//    	} catch (NotFoundException e) {
+//    	    Log.e(tag,"did not find resource",e);
+//    	} catch (IOException e) {
+//    		Log.e(tag,"Failed to open droid provider property file",e);
+//    	}
+//    	String authority = properties.getProperty("authority");
+//    	Log.d(tag,"authority: " + authority);
+//    	return authority;
+    	
     	return Config.AUTHORITY;
     }
+    
+    
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {

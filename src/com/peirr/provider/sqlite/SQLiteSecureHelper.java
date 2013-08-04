@@ -26,7 +26,7 @@ import android.util.Log;
 
 import javax.crypto.SecretKey;
 
-import com.peirr.provider.sqlite.annotations.ObjectProcessor;
+import com.peirr.provider.sqlite.annotations.ProviderUtil;
 
 /**
  * encryption options for R/W to sqlite DB
@@ -40,21 +40,21 @@ public abstract class SQLiteSecureHelper extends SQLiteOpenHelper{
     String tag = SQLiteSecureHelper.class.getSimpleName();
     protected SecretKey sk;
     protected Context ctx;
-    protected ObjectProcessor proc;
+    protected ProviderUtil proc;
     protected SQLiteDatabase db;
 
 
     public SQLiteSecureHelper(Context context){
         super(context, DB_NAME,null, DB_VERSION);
         ctx = context;
-        proc = new ObjectProcessor(sk);
+        proc = new ProviderUtil(sk);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(tag, "onCreate()");
         this.db = db;
-        proc = new ObjectProcessor(db,sk);
+        proc = new ProviderUtil(db,sk);
 
     }
 

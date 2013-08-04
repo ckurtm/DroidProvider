@@ -34,7 +34,7 @@ import com.peirr.provider.R;
 import com.peirr.provider.models.ChildData;
 import com.peirr.provider.models.ParentData;
 import com.peirr.provider.models.Pojo;
-import com.peirr.provider.sqlite.annotations.ObjectProcessor;
+import com.peirr.provider.sqlite.annotations.ProviderUtil;
 
 public class MainActivity extends Activity {
 	String tag = MainActivity.class.getSimpleName();
@@ -61,9 +61,9 @@ public class MainActivity extends Activity {
 			public void onClick(View view) {
 				try {
 					ChildData c1 = new ChildData();
-					ObjectProcessor.createDummyInstance(c1);
+					ProviderUtil.createDummyInstance(c1);
 					ParentData pd = new ParentData("f1",3.0f,c1);
-					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ObjectProcessor.getContentValues(pd));
+					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ProviderUtil.getContentValues(pd));
 					Log.d(tag,"[]+ " + uri);
 				} catch (Exception e) {
 					Log.d(tag,"error: " ,e);
@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
 
 				List<ParentData> list;
 				try {
-					list = ObjectProcessor.getPersistValues(c,ParentData.class);
+					list = ProviderUtil.getRows(c,ParentData.class);
 					for(ParentData parent:list){
 						Log.d(tag,"got: " + parent);
 					}

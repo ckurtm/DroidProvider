@@ -19,7 +19,6 @@
 
 package com.peirr.provider.sqlite.annotations;
 
-import android.net.Uri;
 
 
 /**

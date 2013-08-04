@@ -53,10 +53,10 @@ import com.peirr.provider.sqlite.ProviderObjectValue;
  * @author kurt 
  * 
  */
-public class ObjectProcessor {
+public class ProviderUtil {
 	protected SQLiteDatabase db;
 	protected SecretKey k;
-	static String tag = ObjectProcessor.class.getSimpleName();
+	static String tag = ProviderUtil.class.getSimpleName();
 	public static final String TEST_STRING = "SSSS";
 	public static final int TEST_INTEGER = 1000;
 	public static final long TEST_LONG = 1111l;
@@ -65,11 +65,11 @@ public class ObjectProcessor {
 	public static final float TEST_DOUBLE = 0.55555f;
 	public static final Date TEST_DATE = new Date(123456);
 
-	public ObjectProcessor(SecretKey k) {
+	public ProviderUtil(SecretKey k) {
 		this.k = k;
 	}
 
-	public ObjectProcessor(SQLiteDatabase db, SecretKey k) {
+	public ProviderUtil(SQLiteDatabase db, SecretKey k) {
 		this.db = db;
 		this.k = k;
 	}
@@ -511,7 +511,7 @@ public class ObjectProcessor {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 */
-	public static <T extends ObjectTable> T getPersistValue(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+	public static <T extends ObjectTable> T getRow(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
 		T object = clazz.newInstance();
 		List<Field> fields = new ArrayList<Field>();
 		Field[] privateFields = clazz.getDeclaredFields();
@@ -584,17 +584,17 @@ public class ObjectProcessor {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 */
-	public static <T extends ObjectTable> List<T> getPersistValues(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+	public static <T extends ObjectTable> List<T> getRows(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
 	   List<T> list = new ArrayList<T>();
 	   while(cursor.moveToNext()){
-		   T obj = getPersistValue(cursor, clazz);
+		   T obj = getRow(cursor, clazz);
 		   list.add(obj);
 	   }
 	   return list;
 	}
 	
 	/**
-	 * Same as {@link ObjectProcessor::getPersistValue} but sets the field values expect for the _id field.
+	 * Same as {@link ProviderUtil::getPersistValue} but sets the field values expect for the _id field.
 	 * This is used to instantiate fields annotated with {@link ColumnMerge} 
 	 * @param cursor
 	 * @param clazz

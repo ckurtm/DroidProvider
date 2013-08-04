@@ -43,7 +43,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.peirr.provider.sqlite.annotations.ObjectProcessor;
+import com.peirr.provider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.sqlite.annotations.ObjectTable;
 
 /**
@@ -67,7 +67,7 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 		List<Class<? extends ObjectTable>> definedClasses = getDefinedClasses();
 //		Log.d(tag,"defined classes: " + definedClasses.size());
 		for(Class<?> clazz:definedClasses){
-			String[] data = ObjectProcessor.getMetaDaTa(clazz);
+			String[] data = ProviderUtil.getMetaDaTa(clazz);
 			objects.put(data[0],clazz);
 		}
 //		Log.d(tag,"defined objects: " + objects.size());
@@ -116,7 +116,7 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
 		objectValues.clear();
 		int i = 0;
 		for(String key: getDefinedObjects().keySet()){
-			ProviderObjectValue pv = ObjectProcessor.getProviderValues(getDefinedObjects().get(key));
+			ProviderObjectValue pv = ProviderUtil.getProviderValues(getDefinedObjects().get(key));
 			Log.d(tag,"[]+ " + pv);
 			pv.ONE = (i+2) -1;
 			pv.MANY = (i+2);
