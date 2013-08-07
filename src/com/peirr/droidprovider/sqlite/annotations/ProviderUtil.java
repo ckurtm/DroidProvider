@@ -16,7 +16,7 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite.annotations;
+package com.peirr.droidprovider.sqlite.annotations;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -45,8 +45,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.peirr.provider.sqlite.BaseProvider;
-import com.peirr.provider.sqlite.ProviderObjectValue;
+import com.peirr.droidprovider.sqlite.BaseProvider;
+import com.peirr.droidprovider.sqlite.ProviderObjectValue;
 
 /**
  * This processes the Annotations on the Provider enabled classes
@@ -281,7 +281,7 @@ public class ProviderUtil {
 				if ((annotation instanceof Column) && !((Column)annotation).n().equals("_id")) {
 					Column col = (Column)annotation;
 					//                    LOG.d(tag,"getField: " + field.getName());
-					Field isf = cls.getDeclaredField(field.getName());
+					Field isf = field;
 					if(isf.getModifiers() == Modifier.PRIVATE){
 						isf.setAccessible(true);
 					}
@@ -568,7 +568,7 @@ public class ProviderUtil {
 		
 		
 		for(FieldValue fv:mergeFields){
-			Object childObj = getChildPersistValue(cursor,fv.clazz);
+			Object childObj = getChildColumn(cursor,fv.clazz);
 			fv.field.set(object, childObj);
 		}
 		return object;
@@ -603,7 +603,7 @@ public class ProviderUtil {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 */
-	public static <T> T getChildPersistValue(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+	public static <T> T getChildColumn(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
 		T object = clazz.newInstance();
 		List<Field> fields = new ArrayList<Field>();
 		Field[] privateFields = clazz.getDeclaredFields();

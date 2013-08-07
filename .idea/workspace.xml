@@ -6,7 +6,9 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7383e5e9-b9d4-49b8-b1c3-f634b6e8deef" name="Default" comment="" />
+    <list default="true" id="7383e5e9-b9d4-49b8-b1c3-f634b6e8deef" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/peirr/provider/sqlite/annotations/ProviderUtil.java" afterPath="$PROJECT_DIR$/src/com/peirr/provider/sqlite/annotations/ProviderUtil.java" />
+    </list>
     <ignored path="PeirrContentProvider.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="bin/" />
@@ -28,7 +30,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -65,6 +66,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -77,7 +79,7 @@
       <file leaf-file-name="MyProvider.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyProvider.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="69" selection-start="945" selection-end="999" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
+            <state line="27" column="69" selection-start="945" selection-end="999" vertical-scroll-proportion="0.0" vertical-offset="468" max-vertical-offset="684">
               <folding />
             </state>
           </provider>
@@ -86,7 +88,7 @@
       <file leaf-file-name="MyDataStore.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyDataStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="23" selection-start="418" selection-end="574" vertical-scroll-proportion="0.60674155" vertical-offset="0" max-vertical-offset="445">
+            <state line="22" column="23" selection-start="418" selection-end="574" vertical-scroll-proportion="0.53061223" vertical-offset="0" max-vertical-offset="450">
               <folding />
             </state>
           </provider>
@@ -182,7 +184,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -197,7 +199,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="PeirrContentProvider" />
+              <option name="myItemId" value="DroidProvider" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -207,7 +209,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="PeirrContentProvider" />
+              <option name="myItemId" value="DroidProvider" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -215,9 +217,27 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PeirrContentProvider" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DroidProvider" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="annotations" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -236,8 +256,8 @@
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus_4" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="Android Application.PeirrContentProvider">
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -400,7 +420,7 @@
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32954547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33048433" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -411,10 +431,10 @@
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14425588" sideWeight="0.67045456" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14425588" sideWeight="0.66951567" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20300262" sideWeight="0.67045456" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22780679" sideWeight="0.66951567" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907802" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -490,11 +510,23 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+    <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyProvider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="954">
+        <state line="27" column="69" selection-start="945" selection-end="999" vertical-scroll-proportion="0.0" vertical-offset="468" max-vertical-offset="684">
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyDataStore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="23" selection-start="418" selection-end="574" vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="450">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="954" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyDataStore.java">
@@ -511,18 +543,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/annotations/ObjectProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="32" selection-start="5151" selection-end="5151" vertical-scroll-proportion="0.0" vertical-offset="2178" max-vertical-offset="6300">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="954">
-          <folding />
-        </state>
+        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="954" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyDataStore.java">
@@ -541,9 +564,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/BaseDataStore.java">
@@ -555,23 +576,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="954">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/annotations/ObjectProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="32" selection-start="5151" selection-end="5151" vertical-scroll-proportion="0.0" vertical-offset="2178" max-vertical-offset="6300">
-          <folding />
-        </state>
+        <state line="29" column="16" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="954" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/models/Pojo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="4" selection-start="1513" selection-end="1513" vertical-scroll-proportion="0.4966292" vertical-offset="265" max-vertical-offset="1422">
-          <folding />
-        </state>
+        <state line="50" column="4" selection-start="1513" selection-end="1513" vertical-scroll-proportion="0.4966292" vertical-offset="265" max-vertical-offset="1422" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyProvider.java">
@@ -583,7 +593,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/peirr/provider/sqlite/test/MyDataStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="23" selection-start="418" selection-end="574" vertical-scroll-proportion="0.60674155" vertical-offset="0" max-vertical-offset="445">
+        <state line="22" column="23" selection-start="418" selection-end="574" vertical-scroll-proportion="0.53061223" vertical-offset="0" max-vertical-offset="450">
           <folding />
         </state>
       </provider>

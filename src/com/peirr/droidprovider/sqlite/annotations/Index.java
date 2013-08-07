@@ -17,7 +17,7 @@
  *   https://github.com/ckurtm/PeirrContentProvider
  */
 
-package com.peirr.provider.sqlite.annotations;
+package com.peirr.droidprovider.sqlite.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,12 +25,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines that the attached Object has fields that need to be merged into parent db
- * @author kurt
+ * This is an Attribute annotation
+   
+ * @author kurt 20 Apr 2013  11:04:37 PM
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ColumnMerge {
-	Class<?>  c();
+public @interface Index {
+	public boolean primaryKey();
 }

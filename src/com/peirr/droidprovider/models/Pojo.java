@@ -17,16 +17,16 @@
  *   https://github.com/ckurtm/PeirrContentProvider
  */
 
-package com.peirr.provider.models;
+package com.peirr.droidprovider.models;
 
 
 import android.net.Uri;
 
-import com.peirr.provider.sqlite.BaseProvider;
-import com.peirr.provider.sqlite.annotations.Column;
-import com.peirr.provider.sqlite.annotations.ObjectMapper;
-import com.peirr.provider.sqlite.annotations.ObjectTable;
-import com.peirr.provider.sqlite.annotations.Provide;
+import com.peirr.droidprovider.sqlite.BaseProvider;
+import com.peirr.droidprovider.sqlite.annotations.Column;
+import com.peirr.droidprovider.sqlite.annotations.ObjectMapper;
+import com.peirr.droidprovider.sqlite.annotations.ObjectTable;
+import com.peirr.droidprovider.sqlite.annotations.Provide;
 
 
 /**

@@ -12,11 +12,11 @@ import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.util.Log;
 
-import com.peirr.provider.sqlite.Config;
-import com.peirr.provider.sqlite.ProviderObjectValue;
-import com.peirr.provider.sqlite.annotations.ProviderUtil;
-import com.peirr.provider.sqlite.test.MyDataStore;
-import com.peirr.provider.sqlite.test.MyProvider;
+import com.peirr.droidprovider.sqlite.Config;
+import com.peirr.droidprovider.sqlite.ProviderObjectValue;
+import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
+import com.peirr.droidprovider.sqlite.test.MyDataStore;
+import com.peirr.droidprovider.sqlite.test.MyProvider;
 
 public class MyProviderTestCase extends ProviderTestCase2<MyProvider> {
 	String tag = MyProviderTestCase.class.getSimpleName();

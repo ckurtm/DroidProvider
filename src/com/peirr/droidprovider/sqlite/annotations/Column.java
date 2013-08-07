@@ -16,13 +16,25 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite.annotations;
+
+package com.peirr.droidprovider.sqlite.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Base columns mapping required for each provider enabled object->table mapping
+ * this is a column
+   
  * @author kurt
+ * 
  */
-public class ObjectMapper {
-	public static final String _ID = "_id";
-	public static final String _UT = "u_t"; //update type i.e. CRUD
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Column {
+   //name
+   String  n();
+   //encrypt
+   boolean e();
 }

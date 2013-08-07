@@ -16,17 +16,40 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite.test;
 
-import com.peirr.provider.sqlite.BaseProvider;
-import com.peirr.provider.sqlite.BaseDataStore;
+package com.peirr.droidprovider.sqlite.annotations;
 
-public class MyProvider extends BaseProvider {
+
+
+/**
+ * Base columns required for each provider enabled object->table mapping
+ * @author kurt 
+ */
+public class ObjectTable {
+	@Column(n = "_id", e =false)
+	@Index(primaryKey = true)
+	public long _id;
+	public static int ONE;
+	public static int MANY;
+	public static String CONTENT_ITEM_TYPE;
+	public static String CONTENT_TYPE;
 
 	@Override
-	public BaseDataStore getMyDB() {
-		return new MyDataStore(getContext().getApplicationContext());
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ObjectTable objectTable = (ObjectTable) o;
+
+		if (_id != objectTable._id) return false;
+
+		return true;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		int result = (int) (_id ^ (_id >>> 32));
+		return result;
+	}
 
 }

@@ -16,7 +16,7 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite.test;
+package com.peirr.droidprovider.sqlite.test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +30,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.peirr.droidprovider.models.ChildData;
+import com.peirr.droidprovider.models.ParentData;
+import com.peirr.droidprovider.models.Pojo;
+import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.R;
-import com.peirr.provider.models.ChildData;
-import com.peirr.provider.models.ParentData;
-import com.peirr.provider.models.Pojo;
-import com.peirr.provider.sqlite.annotations.ProviderUtil;
 
 public class MainActivity extends Activity {
 	String tag = MainActivity.class.getSimpleName();

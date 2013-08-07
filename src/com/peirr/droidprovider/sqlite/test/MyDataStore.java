@@ -1,15 +1,15 @@
-package com.peirr.provider.sqlite.test;
+package com.peirr.droidprovider.sqlite.test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
-import com.peirr.provider.models.ParentData;
-import com.peirr.provider.models.Pojo;
-import com.peirr.provider.models.Pojo2;
-import com.peirr.provider.sqlite.BaseDataStore;
-import com.peirr.provider.sqlite.annotations.ObjectTable;
+import com.peirr.droidprovider.models.ParentData;
+import com.peirr.droidprovider.models.Pojo;
+import com.peirr.droidprovider.models.Pojo2;
+import com.peirr.droidprovider.sqlite.BaseDataStore;
+import com.peirr.droidprovider.sqlite.annotations.ObjectTable;
 
 public class MyDataStore extends BaseDataStore {
 

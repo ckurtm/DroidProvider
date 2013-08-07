@@ -17,7 +17,7 @@
  *   https://github.com/ckurtm/PeirrContentProvider
  */
 
-package com.peirr.provider.sqlite;
+package com.peirr.droidprovider.sqlite;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -43,8 +43,8 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.peirr.provider.sqlite.annotations.ProviderUtil;
-import com.peirr.provider.sqlite.annotations.ObjectTable;
+import com.peirr.droidprovider.sqlite.annotations.ObjectTable;
+import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 
 /**
  * This is the database util class for handling reads & writes to app sqlite db

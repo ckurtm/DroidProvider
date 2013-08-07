@@ -16,22 +16,17 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
+package com.peirr.droidprovider.sqlite.test;
 
-package com.peirr.provider.sqlite.annotations;
+import com.peirr.droidprovider.sqlite.BaseDataStore;
+import com.peirr.droidprovider.sqlite.BaseProvider;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class MyProvider extends BaseProvider {
 
-/**
- * This is an Attribute annotation
-   
- * @author kurt 20 Apr 2013  11:04:37 PM
- * 
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Index {
-	public boolean primaryKey();
+	@Override
+	public BaseDataStore getMyDB() {
+		return new MyDataStore(getContext().getApplicationContext());
+	}
+	
+
 }

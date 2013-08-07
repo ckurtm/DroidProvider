@@ -1,4 +1,4 @@
-package com.peirr.provider.sqlite.test;
+package com.peirr.droidprovider.sqlite.test;
 
 import android.app.Application;
 import android.content.Context;

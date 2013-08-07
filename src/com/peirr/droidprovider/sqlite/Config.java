@@ -1,4 +1,4 @@
-package com.peirr.provider.sqlite;
+package com.peirr.droidprovider.sqlite;
 
 public class Config {
 	

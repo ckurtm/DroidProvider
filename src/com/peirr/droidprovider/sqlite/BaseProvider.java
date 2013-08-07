@@ -16,7 +16,7 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite;
+package com.peirr.droidprovider.sqlite;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

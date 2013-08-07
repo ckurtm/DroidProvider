@@ -17,7 +17,7 @@
  *   https://github.com/ckurtm/PeirrContentProvider
  */
 
-package com.peirr.provider.sqlite;
+package com.peirr.droidprovider.sqlite;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;

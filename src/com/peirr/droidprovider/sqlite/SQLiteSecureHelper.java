@@ -16,17 +16,16 @@
  *   ckurtm at gmail dot com
  *   https://github.com/ckurtm/PeirrContentProvider
  */
-package com.peirr.provider.sqlite;
+package com.peirr.droidprovider.sqlite;
+
+import javax.crypto.SecretKey;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
-import javax.crypto.SecretKey;
-
-import com.peirr.provider.sqlite.annotations.ProviderUtil;
+import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 
 /**
  * encryption options for R/W to sqlite DB
@@ -49,6 +48,8 @@ public abstract class SQLiteSecureHelper extends SQLiteOpenHelper{
         ctx = context;
         proc = new ProviderUtil(sk);
     }
+
+    
 
     @Override
     public void onCreate(SQLiteDatabase db) {
