@@ -13,23 +13,24 @@ public class ParentData extends ObjectTable {
 	
 	public ParentData() {}
 	
-	public ParentData(String parentField1, float parentField2,ChildData details1) {
-		this.parentField1 = parentField1;
-		this.parentField2 = parentField2;
-		this.details1 = details1;
+	public ParentData(String p1, float p2,ChildData c1,ChildData c2) {
+		this.parent1 = p1;
+		this.parent2 = p2;
+		this.parent3 = c1;
+		this.parent4 = c2;
 	}
 
-	@Column(n = Mapper.PARENTFIELD1,e=false)
-	public String parentField1;
+	@Column(n = Mapper.FIELD1,e=false)
+	public String parent1;
 	
-	@Column(n = Mapper.PARENTFIELD2,e=false)
-	public float parentField2;
+	@Column(n = Mapper.FIELD2,e=false)
+	public float parent2;
 	
 	@ColumnMerge(c=ChildData.class)
-	public ChildData details1;
+	public ChildData parent3;
 	
-//	@ColumnMerge(c=ChildData.class)
-//	public ChildData details2;
+	@ColumnMerge(c=ChildData.class)
+	public ChildData parent4;
 	
 	@Provide(BaseProvider.PROVIDE_TABLE)
     public static final String TABLE = "parentData";
@@ -42,17 +43,19 @@ public class ParentData extends ObjectTable {
     
     
     public static final class Mapper extends ObjectMapper {
-        public static final String PARENTFIELD1 = "pi";
-        public static final String PARENTFIELD2 = "pii";
+        public static final String FIELD1 = "parent1";
+        public static final String FIELD2 = "parent2";
 
     }
 
 
 	@Override
 	public String toString() {
-		return "ParentData [parentField1=" + parentField1 + ", parentField2="
-				+ parentField2 + ", details1=" + details1 + ", _id=" + _id
-				+ "]";
+		return "ParentData [parent1=" + parent1 + ", parent2=" + parent2
+				+ ", parent3=" + parent3 + ", parent4=" + parent4 + "]";
 	}
+
+
+
 
 }

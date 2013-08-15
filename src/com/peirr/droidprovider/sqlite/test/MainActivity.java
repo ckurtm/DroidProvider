@@ -61,9 +61,15 @@ public class MainActivity extends Activity {
 			public void onClick(View view) {
 				try {
 					ChildData c1 = new ChildData();
+					ChildData c2 = new ChildData();
 					ProviderUtil.createDummyInstance(c1);
-					ParentData pd = new ParentData("f1",3.0f,c1);
-					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,ProviderUtil.getContentValues(pd));
+					c2.child1 = "ffsdf";
+					c2.child2 = 23f;
+					ParentData pd = new ParentData("p1",3.0f,c1,c2);
+					Log.d(tag,"object: " + pd);
+                    ContentValues values= ProviderUtil.getContentValues(pd);
+					Log.d(tag,"values: " + values);
+					Uri uri = getContentResolver().insert(ParentData.CONTENT_URI,values);
 					Log.d(tag,"[]+ " + uri);
 				} catch (Exception e) {
 					Log.d(tag,"error: " ,e);

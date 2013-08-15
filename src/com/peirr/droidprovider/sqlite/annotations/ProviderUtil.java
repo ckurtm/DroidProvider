@@ -209,7 +209,7 @@ public class ProviderUtil {
 				if (annotation instanceof Column) {
 					Column col = (Column)annotation;
 //					queryBuilder.append(col.n() + "" + (prefix!=null?prefix:"") + " ");
-					queryBuilder.append(clazz.getSimpleName() + col.n() + " ");
+					queryBuilder.append(clazz.getSimpleName() + col.n() + (prefix!=null?("_"+prefix):"") + " ");
 					added = true;
 				}
 
@@ -253,12 +253,11 @@ public class ProviderUtil {
 	 * @throws IllegalAccessException
 	 */
 	public static ContentValues getContentValues(Object obj,boolean... includePrimary) throws Exception{
-		Log.d(tag,"getContentValues: " + obj);
+//		Log.d(tag,"getContentValues: " + obj);
 		ContentValues cv =  new ContentValues();
 		List<Field> fields = new ArrayList<Field>();
 		List<FieldValue> mergeFields = new ArrayList<FieldValue>();//list of all merged fields
 		Class<?> clazz = Class.forName(obj.getClass().getName());
-		Class<?> cls = obj.getClass();
 
 		Field[] privateFields = clazz.getDeclaredFields();
 		Field[] publicFields = clazz.getFields();
@@ -328,18 +327,18 @@ public class ProviderUtil {
 		}
 
 		if(mergeFields.size() > 0){
-//			int prefix = 0;
+			int prefix = 0;
 			for(FieldValue o:mergeFields){
-//				prefix++;
+				prefix++;
 				if(o != null){
 					ContentValues values = getContentValues(o.object,false);
 					for(Map.Entry<String, Object> kv:values.valueSet()){
-						cv.put(o.clazz.getSimpleName() + kv.getKey(),String.valueOf(kv.getValue()));
+						cv.put(o.clazz.getSimpleName() + kv.getKey() + "_" + prefix,String.valueOf(kv.getValue()));
 				     }
 				}
 			}
 		}	
-		//		Log.d(tag,"CONTENT VALUES: " + cv);
+//		Log.d(tag,"CONTENT VALUES: " + cv);
 		return cv;
 	}
 
@@ -411,7 +410,7 @@ public class ProviderUtil {
 	 * @throws IllegalAccessException
 	 */
 	public static String[] getMetaDaTa(Class<?> clazz) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-		Log.d(tag,"getMetadata() " + clazz.getName());
+//		Log.d(tag,"getMetadata() " + clazz.getName());
 		String[] metadata = new String[2];
 		List<Field> fields = new ArrayList<Field>();
 		Field[] privateFields = clazz.getDeclaredFields();
@@ -437,11 +436,11 @@ public class ProviderUtil {
 					switch(col.value()){
 						case BaseProvider.PROVIDE_TABLE:
 							metadata[0] = (String) isf.get(clazz);
-							Log.d(tag," .. table: " + metadata[0]);
+//							Log.d(tag," .. table: " + metadata[0]);
 							break;
 						case BaseProvider.PROVIDE_KEY:
 							metadata[1] = (String) isf.get(clazz);
-							Log.d(tag," .. key  : " + metadata[1]);
+//							Log.d(tag," .. key  : " + metadata[1]);
 							break;
 						case BaseProvider.PROVIDE_URI:
 							break;
@@ -566,9 +565,10 @@ public class ProviderUtil {
 			}
 		}
 		
-		
+		int prefix = 0;
 		for(FieldValue fv:mergeFields){
-			Object childObj = getChildColumn(cursor,fv.clazz);
+			prefix++;
+			Object childObj = getChildColumn(cursor,fv.clazz,prefix);
 			fv.field.set(object, childObj);
 		}
 		return object;
@@ -603,7 +603,7 @@ public class ProviderUtil {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 */
-	public static <T> T getChildColumn(Cursor cursor,Class<T> clazz) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
+	public static <T> T getChildColumn(Cursor cursor,Class<T> clazz,int prefix) throws InstantiationException, IllegalAccessException, NoSuchFieldException{
 		T object = clazz.newInstance();
 		List<Field> fields = new ArrayList<Field>();
 		Field[] privateFields = clazz.getDeclaredFields();
@@ -630,19 +630,19 @@ public class ProviderUtil {
 						field.setAccessible(true);
 					}
 					if (String.class.isAssignableFrom(field.getType())) {
-						field.set(object,cursor.getString(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
+						field.set(object,cursor.getString(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix)));
 					}else if(field.getType() == Integer.TYPE){
-						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
+						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix)));
 					}else if (field.getType() == Long.TYPE) {
-						field.set(object,cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
+						field.set(object,cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix)));
 					}else if (field.getType() == Boolean.TYPE) {
-						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n()))>0?true:false);
+						field.set(object,cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix))>0?true:false);
 					}else if (field.getType() == Float.TYPE) {
-						field.set(object,cursor.getFloat(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
+						field.set(object,cursor.getFloat(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix)));
 					}else if (field.getType() == Double.TYPE) {
-						field.set(object,cursor.getDouble(cursor.getColumnIndex(clazz.getSimpleName()+col.n())));
+						field.set(object,cursor.getDouble(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix)));
 					}else if(Date.class.isAssignableFrom(field.getType())){
-						field.set(object,new Date(cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n()))));
+						field.set(object,new Date(cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName()+col.n() + "_" + prefix))));
 					}
 					if(field.getModifiers() == Modifier.PRIVATE){
 						field.setAccessible(false);
