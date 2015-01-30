@@ -34,7 +34,7 @@ import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.DemoDataProvider;
 import com.peirr.provider.DemoDataStore;
 import com.peirr.provider.ProviderContract;
-import com.test.providersample.MyPojo;
+import test.test.providersample.MyPojo;
 
 
 /**

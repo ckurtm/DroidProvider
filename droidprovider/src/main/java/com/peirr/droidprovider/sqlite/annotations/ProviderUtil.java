@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -68,6 +69,8 @@ public class ProviderUtil {
     static String tag = ProviderUtil.class.getSimpleName();
     protected SQLiteDatabase db;
     protected SecretKey k;
+    private static final String CHARACTER_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+    private static Random random = new Random();
 
     public ProviderUtil(SecretKey k) {
         this.k = k;
@@ -502,6 +505,7 @@ public class ProviderUtil {
      * @throws Exception
      */
     public static <T> T createDummyInstance(Class<T> clazz) throws Exception {
+
         //        LOG.d(tag,"getContentValues: " + obj);
         List<Field> fields = new ArrayList<Field>();
 //        Class<?> clazz = Class.forName(obj.getClass().getName());
@@ -527,7 +531,7 @@ public class ProviderUtil {
                         field.setAccessible(true);
                     }
                     if (String.class.isAssignableFrom(field.getType())) {
-                        field.set(obj, TEST_STRING);
+                        field.set(obj, randomString(8));
                     } else if (field.getType() == Integer.TYPE) {
                         field.set(obj, TEST_INTEGER);
                     } else if (field.getType() == Long.TYPE) {
@@ -550,6 +554,14 @@ public class ProviderUtil {
             }
         }
         return (T) obj;
+    }
+
+
+    private static String randomString( int len ){
+        StringBuilder sb = new StringBuilder( len );
+        for( int i = 0; i < len; i++ )
+            sb.append(CHARACTER_SET.charAt(random.nextInt(CHARACTER_SET.length())));
+        return sb.toString();
     }
 
     /**

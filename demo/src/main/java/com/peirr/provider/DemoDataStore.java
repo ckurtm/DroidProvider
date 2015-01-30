@@ -26,7 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.peirr.droidprovider.sqlite.BaseDataStore;
 import com.peirr.droidprovider.sqlite.annotations.ObjectRow;
-import com.test.providersample.MyPojo;
+import test.test.providersample.MyPojo;
 
 import java.util.ArrayList;
 import java.util.List;

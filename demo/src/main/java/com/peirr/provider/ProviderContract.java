@@ -25,6 +25,6 @@ package com.peirr.provider;
  * Created by kurt on 2014/09/03.
  */
 public class ProviderContract {
-    public static final String CONTENT_AUTHORITY = "com.test.AUTHORITY";
+    public static final String CONTENT_AUTHORITY = "com.peirr.droidprovider.test.AUTHORITY";
     public static final int CONTENT_VERSION = 1;
 }

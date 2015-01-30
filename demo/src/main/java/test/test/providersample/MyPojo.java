@@ -19,7 +19,7 @@
  *
  */
 
-package com.test.providersample;
+package test.test.providersample;
 
 import com.peirr.droidprovider.sqlite.BaseProvider;
 import com.peirr.droidprovider.sqlite.annotations.DroidColumn;
@@ -39,7 +39,7 @@ public class MyPojo extends ObjectRow {
     @DroidProvider(BaseProvider.PROVIDE_URI)
     public static final android.net.Uri CONTENT_URI = BaseProvider.getContentUri("content://#AUTHORITY#/" + TABLE);
     @DroidProvider(BaseProvider.PROVIDE_KEY)
-    public static final String KEY = Mapper._ID;
+    public static final String KEY = Mapper.mydatecol;
 
     @DroidColumn(name = Mapper.mystrcol)
     public String mystring;

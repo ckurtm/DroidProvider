@@ -23,9 +23,6 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-    }
 }
 
 apply plugin: 'com.android.application'
@@ -35,8 +32,8 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.test.providersample"
-        minSdkVersion 14
+        applicationId "com.peirr.droidprovider.test"
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -51,4 +48,6 @@ android {
 
 dependencies {
     compile project(':droidprovider')
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:21.0.3'
 }
