@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PeirrContentProvider.iml" filepath="$PROJECT_DIR$/PeirrContentProvider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DroidProvider.iml" filepath="$PROJECT_DIR$/.idea/DroidProvider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/droidprovider/droidprovider.iml" filepath="$PROJECT_DIR$/droidprovider/droidprovider.iml" />
     </modules>
   </component>
 </project>

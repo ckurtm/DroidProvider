@@ -19,18 +19,16 @@
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
+/**
+ * Automatically generated file. DO NOT MODIFY
+ */
+package com.peirr.droidprovider;
 
-allprojects {
-    repositories {
-        jcenter()
-    }
+public final class BuildConfig {
+  public static final boolean DEBUG = Boolean.parseBoolean("true");
+  public static final String APPLICATION_ID = "com.peirr.droidprovider";
+  public static final String BUILD_TYPE = "debug";
+  public static final String FLAVOR = "";
+  public static final int VERSION_CODE = 1;
+  public static final String VERSION_NAME = "1.0";
 }

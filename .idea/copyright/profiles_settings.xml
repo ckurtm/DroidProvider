@@ -1,5 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="Peirr Apache">
-    <module2copyright />
+  <settings default="droidprovider">
+    <module2copyright>
+      <element module="All" copyright="droidprovider" />
+    </module2copyright>
   </settings>
 </component>

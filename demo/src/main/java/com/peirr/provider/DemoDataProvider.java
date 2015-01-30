@@ -19,18 +19,19 @@
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
+package com.peirr.provider;
 
-allprojects {
-    repositories {
-        jcenter()
+
+import com.peirr.droidprovider.sqlite.BaseDataStore;
+import com.peirr.droidprovider.sqlite.BaseProvider;
+
+/**
+ * Created by kurt on 1/1/14 - 12:30 PM.
+ */
+public class DemoDataProvider extends BaseProvider {
+
+    @Override
+    public BaseDataStore getMyDB() {
+        return new DemoDataStore(getContext());
     }
 }

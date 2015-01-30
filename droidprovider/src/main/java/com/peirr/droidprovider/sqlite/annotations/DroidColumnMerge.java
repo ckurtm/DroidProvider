@@ -19,18 +19,22 @@
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
+package com.peirr.droidprovider.sqlite.annotations;
 
-allprojects {
-    repositories {
-        jcenter()
-    }
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Defines that the attached Object has fields that need to be merged into parent db
+ *
+ * @author kurt
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface DroidColumnMerge {
+    Class<?> c();
+
+    int seq() default 1;
 }

@@ -18,19 +18,14 @@
  *  *   https://github.com/ckurtm/DroidProvider
  *
  */
+package com.peirr.droidprovider.sqlite.annotations;
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-    }
+/**
+ * Base columns mapping required for each provider enabled object->table mapping
+ *
+ * @author kurt
+ */
+public class ObjectMapper {
+    public static final String _ID = "_id";
+    public static final String _UT = "u_t"; //update type i.e. CRUD
 }

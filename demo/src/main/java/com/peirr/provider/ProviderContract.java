@@ -19,18 +19,12 @@
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
+package com.peirr.provider;
 
-allprojects {
-    repositories {
-        jcenter()
-    }
+/**
+ * Created by kurt on 2014/09/03.
+ */
+public class ProviderContract {
+    public static final String CONTENT_AUTHORITY = "com.test.AUTHORITY";
+    public static final int CONTENT_VERSION = 1;
 }

@@ -18,19 +18,19 @@
  *  *   https://github.com/ckurtm/DroidProvider
  *
  */
+package com.peirr.droidprovider.sqlite.annotations;
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
-    }
-}
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-allprojects {
-    repositories {
-        jcenter()
-    }
+/**
+ * @author kurt
+ *         DroidProvider
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface DroidProvider {
+    public int value();
 }
