@@ -22,7 +22,9 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.1'
     }
@@ -47,8 +49,4 @@ android {
         versionCode 1
         versionName "1.0"
     }
-}
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 }

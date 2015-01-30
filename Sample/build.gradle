@@ -19,15 +19,6 @@
  *
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-    }
-}
-
 apply plugin: 'com.android.application'
 
 android {
@@ -50,5 +41,5 @@ android {
 }
 
 dependencies {
-    compile project(':droidprovider')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
