@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -57,12 +58,18 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         adapter = new MyPojoAdapter(this,R.layout.list_item,items);
         list.setAdapter(adapter);
 
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                deleteRow(position);
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                        addNewRow();
+                addNewRow();
 
             }
         });
@@ -85,6 +92,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         }
         getLoaderManager().restartLoader(0,null,this);
 
+    }
+
+    private void deleteRow(int position) {
+        MyPojo pojo = adapter.getItem(position);
+        getBaseContext().getContentResolver().delete(MyPojo.CONTENT_URI, MyPojo.Mapper._ID + "=?", new String[]{String.valueOf(pojo._id)});
     }
 
 
