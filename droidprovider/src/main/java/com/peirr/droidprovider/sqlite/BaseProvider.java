@@ -29,7 +29,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -66,6 +65,15 @@ public abstract class BaseProvider extends ContentProvider {
     }
 
     public abstract BaseDataStore getMyDB();
+
+    /**
+     * gets the name of the current db
+     *
+     * @return the name of the current database
+     */
+    public String getCurrentDB() {
+        return BaseDataStore.DATABASE;
+    }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
@@ -132,7 +140,7 @@ public abstract class BaseProvider extends ContentProvider {
     }
 
     @Override
-    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
+    public int bulkInsert(Uri uri, ContentValues[] values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
         int rowsAffected = 0;

@@ -31,6 +31,12 @@ public class DroidProviderContract {
     public static final String CONTENT_AUTHORITY = values[0];
     public static final int CONTENT_VERSION = Integer.valueOf(values[1]);
 
+
+    /**
+     * initialise the provider
+     *
+     * @return returns the authority and db version
+     */
     private static String[] initProvider() {
         String[] values = new String[2];
         String authority = "com.peirr.droidprovider"; //The default AUTHORITY if non was found

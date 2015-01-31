@@ -72,10 +72,18 @@ public class ProviderUtil {
     private static final String CHARACTER_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
     private static Random random = new Random();
 
+    /**
+     * @param k the secret key to be used for db field encryption
+     */
     public ProviderUtil(SecretKey k) {
         this.k = k;
     }
 
+
+    /**
+     * @param db reference to the Sqlite database
+     * @param k  the secret key to be used for db field encryption
+     */
     public ProviderUtil(SQLiteDatabase db, SecretKey k) {
         this.db = db;
         this.k = k;
@@ -84,8 +92,9 @@ public class ProviderUtil {
     /**
      * gets the database fields from this object, but not the primary key fields if they do exists
      *
-     * @param className
-     * @return
+     * @param className the classname of the class you want fields for
+     * @param prefix    prefix to be assigned at end of class name if any
+     * @return the fields
      * @throws ClassNotFoundException
      */
     private static String getFields(String className, Integer prefix) throws ClassNotFoundException {
@@ -154,13 +163,10 @@ public class ProviderUtil {
     /**
      * Creates a {@link android.content.ContentValues} instance for the given Class that uses the {@link DroidColumn} annotation to define fields.
      *
-     * @param obj
+     * @param obj            - object instance that you would like to get content values from. This should be a class extending from the ObjectRow class
      * @param includePrimary - if true, then include the primary key as part of the content values
-     * @return
-     * @throws ClassNotFoundException
-     * @throws NoSuchFieldException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * @return the actual content values
+     * @throws java.lang.Exception if something goes wrong
      */
     public static ContentValues getContentValues(Object obj, boolean... includePrimary) throws Exception {
         //		Log.d(tag,"getContentValues: " + obj);
@@ -253,11 +259,11 @@ public class ProviderUtil {
     /**
      * This gets the details about the class, i.e. the table name, the primary key
      *
-     * @param clazz
+     * @param clazz the class that you want to get metadata from
      * @return a string array [0] = table name, [1] = key
-     * @throws NoSuchFieldException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException     if something goes wrong
+     * @throws IllegalArgumentException if something goes wrong
+     * @throws IllegalAccessException   if something goes wrong
      */
     public static String[] getMetaDaTa(Class<?> clazz) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         //		Log.d(tag,"getMetadata() " + clazz.getName());
@@ -297,6 +303,23 @@ public class ProviderUtil {
         return metadata;
     }
 
+
+    /**
+     * gets the content provider values from the supplied class
+     *
+     * @param clazz class you want to get provider values from
+     * @return the provider object value
+     * @throws ClassNotFoundException             possible exception
+     * @throws NoSuchFieldException               possible exception
+     * @throws IllegalAccessException             possible exception
+     * @throws NoSuchPaddingException             possible exception
+     * @throws InvalidAlgorithmParameterException possible exception
+     * @throws UnsupportedEncodingException       possible exception
+     * @throws IllegalBlockSizeException          possible exception
+     * @throws BadPaddingException                possible exception
+     * @throws NoSuchAlgorithmException           possible exception
+     * @throws InvalidKeyException                possible exception
+     */
     public static ProviderObjectValue getProviderValues(Class<?> clazz) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         //        LOG.d(tag,"getContentValues: " + obj);
         ProviderObjectValue pv = new ProviderObjectValue();
@@ -345,12 +368,11 @@ public class ProviderUtil {
     /**
      * This gets a row from the table for the given class T using the given {@link android.database.Cursor}
      *
-     * @param cursor
-     * @param clazz
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
+     * @param clazz  the class type
+     * @param cursor the query cursor
+     * @param <T>    the class type
+     * @return the object instance of the supplied clazz with data bound from the supplied cursor
+     * @throws java.lang.Exception if something goes wrong
      */
     public static <T extends ObjectRow> T getRow(Cursor cursor, Class<T> clazz) throws Exception {
         T object = clazz.newInstance();
@@ -411,6 +433,17 @@ public class ProviderUtil {
         return object;
     }
 
+
+    /**
+     * gets a single row from supplied cursor
+     *
+     * @param clazz      the class type
+     * @param cursor     the query cursor
+     * @param moveTonext if true then the cursor will be moved to next row before binding starts
+     * @param <T>        the class type
+     * @return the object instace bound to the class type supplied
+     * @throws Exception when something goess wrong
+     */
     public static <T extends ObjectRow> T getRow(Cursor cursor, Class<T> clazz, boolean moveTonext) throws Exception {
         if (moveTonext)
             cursor.moveToNext();
@@ -418,14 +451,13 @@ public class ProviderUtil {
     }
 
     /**
-     * Get a List<T> from the DB using qa{@link android.content.ContentProvider} for class T
+     * Get a List from the DB using qa{@link android.content.ContentProvider} for class T
      *
-     * @param cursor
-     * @param clazz
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
+     * @param clazz  the class type
+     * @param cursor the query cursor
+     * @param <T>    the class type
+     * @return a list of object instances bound to the class type supplied
+     * @throws Exception when something goes wrong
      */
     public static <T extends ObjectRow> List<T> getRows(Cursor cursor, Class<T> clazz) throws Exception {
         List<T> list = new ArrayList<T>();
@@ -442,12 +474,14 @@ public class ProviderUtil {
      * Same as {@link ProviderUtil ::getPersistValue} but sets the field values expect for the _id field.
      * This is used to instantiate fields annotated with {@link DroidColumnMerge}
      *
-     * @param cursor
-     * @param clazz
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
+     * @param clazz  the class type
+     * @param cursor the query cursor
+     * @param <T>    the class type
+     * @param prefix prefix no to be used on appending to class name
+     * @return a list of object instances bound to the class type supplied
+     * @throws InstantiationException when something goes wrong
+     * @throws IllegalAccessException when something goes wrong
+     * @throws NoSuchFieldException   when something goes wrong
      */
     public static <T> T getChildColumn(Cursor cursor, Class<T> clazz, int prefix) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         T object = clazz.newInstance();
@@ -499,16 +533,15 @@ public class ProviderUtil {
     }
 
     /**
-     * you pass it and instance of any object & this class creates dummy data for the annotated fields marked with {@linkplain DroidColumn} annotation
+     * you pass it an instance of any object and this class creates dummy data for the annotated fields marked with {@linkplain DroidColumn} annotation
      *
-     * @param clazz
-     * @throws Exception
+     * @param clazz the class
+     * @param <T>   the class type
+     * @return a populated instance of supplied class type
+     * @throws java.lang.Exception if something goes wrong
      */
     public static <T> T createDummyInstance(Class<T> clazz) throws Exception {
-
-        //        LOG.d(tag,"getContentValues: " + obj);
         List<Field> fields = new ArrayList<Field>();
-//        Class<?> clazz = Class.forName(obj.getClass().getName());
         Object obj = (T) clazz.newInstance();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
@@ -557,9 +590,15 @@ public class ProviderUtil {
     }
 
 
-    private static String randomString( int len ){
-        StringBuilder sb = new StringBuilder( len );
-        for( int i = 0; i < len; i++ )
+    /**
+     * generates a random string
+     *
+     * @param len length of the string
+     * @return the generated string
+     */
+    private static String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++)
             sb.append(CHARACTER_SET.charAt(random.nextInt(CHARACTER_SET.length())));
         return sb.toString();
     }
@@ -567,9 +606,9 @@ public class ProviderUtil {
     /**
      * Create a table via reflection of a class anotated using the {@link DroidColumn} annotation.
      *
-     * @param clazz
-     * @param table
-     * @throws ClassNotFoundException
+     * @param clazz the class that you want to create a table of
+     * @param table the table name
+     * @throws java.lang.ClassNotFoundException if something goes wrong
      */
     @SuppressLint("DefaultLocale")
     public void createTable(Class<?> clazz, String table) throws ClassNotFoundException {
@@ -658,6 +697,11 @@ public class ProviderUtil {
         db.execSQL(query);
     }
 
+    /**
+     * decrypts data from the supplied object from the db
+     *
+     * @param obj class instance to decrypt
+     */
     public void decryptObject(Object obj) {
         List<Field> fields = new ArrayList<Field>();
         Class<?> clazz;
@@ -681,8 +725,7 @@ public class ProviderUtil {
             for (Field field : fields) {
                 Annotation annotation = field.getAnnotation(DroidColumn.class);
                 if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
-                    if ((annotation instanceof DroidColumn) && !((DroidColumn) annotation).name().equals("_id")) {
-
+                    if (!((DroidColumn) annotation).name().equals("_id")) {
                         Field isf = cls.getDeclaredField(field.getName());
                         if (String.class.isAssignableFrom(field.getType())) {
                             String val = (String) isf.get(obj);
@@ -693,14 +736,6 @@ public class ProviderUtil {
 
                 }
             }
-        } catch (ClassNotFoundException e) {
-            //			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
-        } catch (NoSuchFieldException e) {
-            //			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
-        } catch (IllegalArgumentException e) {
-            //			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
-        } catch (IllegalAccessException e) {
-            //			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
         } catch (Exception e) {
             //			Log.e(tag,"decryptObject ERROR: " + e.getMessage() ,e);
         }

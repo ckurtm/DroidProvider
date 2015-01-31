@@ -28,7 +28,6 @@ import android.text.TextUtils;
 
 /**
  * @author kurt
- *         PeirrContentProvider
  */
 public class ProviderObjectValue {
     public int MANY;
@@ -39,6 +38,17 @@ public class ProviderObjectValue {
     public String TABLE;
     public Uri URI;
 
+
+    /**
+     * gets the rows that were deleted
+     *
+     * @param uri       the table uri
+     * @param type      the type
+     * @param db        the db
+     * @param selection selecting of columns
+     * @param args      selection args
+     * @return returns the count of deleted rows
+     */
     public int getDeletedRows(Uri uri, int type, SQLiteDatabase db, String selection, String[] args) {
         int rowsAffected = 0;
         if (type == MANY) {
@@ -54,6 +64,17 @@ public class ProviderObjectValue {
         return rowsAffected;
     }
 
+    /**
+     * gets the rows that were updated
+     *
+     * @param uri       the table uri
+     * @param values    content values
+     * @param type      the type
+     * @param db        the db
+     * @param selection selecting of columns
+     * @param args      selection args
+     * @return returns the count of updated rows
+     */
     public int getUpdatedRows(Uri uri, ContentValues values, int type, SQLiteDatabase db, String selection, String[] args) {
         int rowsAffected = 0;
         if (type == ONE) {

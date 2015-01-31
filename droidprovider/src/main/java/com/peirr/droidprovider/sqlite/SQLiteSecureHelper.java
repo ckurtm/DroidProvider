@@ -66,6 +66,11 @@ public abstract class SQLiteSecureHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * gets the current underlying db being used by the content provider
+     *
+     * @return the sqlite db instance
+     */
     public SQLiteDatabase getDb() {
         return db;
     }

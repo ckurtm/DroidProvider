@@ -23,7 +23,7 @@ package com.peirr.droidprovider.sqlite.annotations;
 
 
 /**
- * Base columns required for each provider enabled object->table mapping
+ * Base columns required for each provider enabled object to table mapping
  *
  * @author kurt
  */
