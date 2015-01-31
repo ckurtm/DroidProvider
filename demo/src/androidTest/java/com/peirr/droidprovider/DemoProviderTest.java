@@ -23,25 +23,28 @@ package com.peirr.droidprovider;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
-import android.test.mock.MockContentResolver;
 
 import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.DemoDataProvider;
 import com.peirr.provider.DemoDataStore;
 import com.peirr.provider.ProviderContract;
+
 import test.test.providersample.MyPojo;
 
 
 /**
- * Created by kurt on 2014/07/19.
+ *
+ * Created by kurt on 31 01 2015 .
+ *
  */
 public class DemoProviderTest extends ProviderTestCase2<DemoDataProvider> {
-    private MockContentResolver resolver;
+    private ContentResolver resolver;
 
     public DemoProviderTest() {
         super(DemoDataProvider.class, ProviderContract.CONTENT_AUTHORITY);
@@ -50,12 +53,11 @@ public class DemoProviderTest extends ProviderTestCase2<DemoDataProvider> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        resolver = getMockContentResolver();
+        resolver = getContext().getContentResolver();
     }
 
     public void testInsertDelete() throws Exception {
         //INSERT
-        DemoDataStore store = new DemoDataStore(getMockContext());
         MyPojo item = ProviderUtil.createDummyInstance(MyPojo.class);
         Uri uri = resolver.insert(MyPojo.CONTENT_URI, ProviderUtil.getContentValues(item, false));
         assertNotNull(uri);

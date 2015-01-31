@@ -26,23 +26,26 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.peirr.droidprovider.sqlite.BaseDataStore;
 import com.peirr.droidprovider.sqlite.annotations.ObjectRow;
-import test.test.providersample.MyPojo;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import test.test.providersample.MyPojo;
+
 /**
- * Created by kurt on 1/1/14 - 12:29 PM.
+ *
+ * Created by kurt on 31 01 2015 .
+ *
  */
 public class DemoDataStore extends BaseDataStore {
 
-    public DemoDataStore(Context context) {
-        super(context);
+    public DemoDataStore(Context context, String dbfile) {
+        super(context, dbfile);
     }
 
     @Override
     public List<Class<? extends ObjectRow>> getDefinedClasses() {
-        List<Class<? extends ObjectRow>> list = new ArrayList<Class<? extends ObjectRow>>();
+        List<Class<? extends ObjectRow>> list = new ArrayList<>();
         list.add(MyPojo.class);
         return list;
     }

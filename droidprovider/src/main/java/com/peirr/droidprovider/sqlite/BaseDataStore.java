@@ -54,16 +54,16 @@ import javax.crypto.NoSuchPaddingException;
  * This is the database util class for handling reads & writes to app sqlite db
  *
  * @author kurt
- * @playing [Say My Name (Cyril Hahn Remix)]
+ * PLAYING [Say My Name (Cyril Hahn Remix)]
  */
 public abstract class BaseDataStore extends SQLiteSecureHelper {
     String tag = BaseDataStore.class.getSimpleName();
-    private List<ProviderObjectValue> objectValues = new ArrayList<ProviderObjectValue>();
+    private List<ProviderObjectValue> objectValues = new ArrayList<>();
     private Map<String, Class<?>> definedObjs;
     private Context context;
 
-    public BaseDataStore(Context context) {
-        super(context);
+    public BaseDataStore(Context context, String dbFile) {
+        super(context, dbFile);
         this.context = context;
         try {
             if (objectValues.size() == 0) {
@@ -81,7 +81,7 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
     }
 
     public Map<String, Class<?>> getDefinedObjects() throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
-        Map<String, Class<?>> objects = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> objects = new HashMap<>();
         List<Class<? extends ObjectRow>> definedClasses = getDefinedClasses();
         for (Class<?> clazz : definedClasses) {
             String[] data = ProviderUtil.getMetaDaTa(clazz);
@@ -142,46 +142,6 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
         return context;
     }
 
-    /**
-     * Add a new row into the provided table
-     *
-     * @param values - the data to insert
-     * @param uri    - the tables content uri
-     * @return insertion id
-     */
-    public long addRowToTable(Uri uri, ContentValues values) {
-        Uri resUri = ctx.getApplicationContext().getContentResolver().insert(uri, values);
-        return ContentUris.parseId(resUri);
-    }
-
-
-    public int deleteRow(Uri uri, long id) {
-        Uri nuri = ContentUris.withAppendedId(uri, id);
-        return ctx.getApplicationContext().getContentResolver().delete(nuri, null, null);
-    }
-
-    public int deleteRow(Uri uri, String key, String value, ContentValues values) {
-        return ctx.getApplicationContext().getContentResolver().delete(uri, key + "=?", new String[]{value});
-    }
-
-    public boolean exists(Uri uri, HashMap<String, String> keyValues) {
-        boolean exists = false;
-        StringBuilder query = new StringBuilder();
-        for (String key : keyValues.keySet()) {
-            query.append(String.format("%s = '%s' AND ", key, keyValues.get(key)));
-        }
-        query.delete(query.lastIndexOf("AND"), query.length());
-        Cursor c = ctx.getContentResolver().query(uri, null, query.toString(), null, null);
-
-        if (c != null) {
-            if (c.getCount() > 0) {
-                exists = true;
-            }
-            c.close();
-        }
-
-        return exists;
-    }
 
     public boolean exists(Uri uri, String key, String value) {
         boolean exists = false;
@@ -231,14 +191,10 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
      * This is not yet optimised to notify the underlying content provider that data has changed at a broader level,
      * USE AT YOUR OWN RISK , as notification of change is made @ an atomic level, i.e. for each row added a notification
      * is sent back to all loaders that are listening for changes.
-     *
-     * @param authority
-     * @param values
-     * @return
      */
     public boolean addBatchToTable(Uri uri, String authority, List<ContentValues> values) {
         boolean success = false;
-        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(uri);
         for (ContentValues cv : values) {
             builder.withValues(cv);
@@ -249,9 +205,7 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
             if (results.length == values.size()) {
                 success = true;
             }
-        } catch (RemoteException e) {
-            Log.e(tag, e.getMessage(), e);
-        } catch (OperationApplicationException e) {
+        } catch (RemoteException | OperationApplicationException e) {
             Log.e(tag, e.getMessage(), e);
         }
         return success;

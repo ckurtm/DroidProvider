@@ -36,18 +36,24 @@ import javax.crypto.SecretKey;
  * @author kurt
  */
 public abstract class SQLiteSecureHelper extends SQLiteOpenHelper {
-    public static final String ID = "_id";
-    private static final int DB_VERSION = DroidProviderContract.CONTENT_VERSION;
-    private static final String DB_NAME = "base";
+    private static final int DATABASE_VERSION = DroidProviderContract.CONTENT_VERSION;
+    public final static String DATABASE = "base";
+    public final static String DATABASE_KEY = "droidprovider";
+
     protected SecretKey sk;
     protected Context ctx;
     protected ProviderUtil proc;
     protected SQLiteDatabase db;
     String tag = SQLiteSecureHelper.class.getSimpleName();
 
-
     public SQLiteSecureHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, DATABASE, null, DATABASE_VERSION);
+        ctx = context;
+        proc = new ProviderUtil(sk);
+    }
+
+    public SQLiteSecureHelper(Context context, String dbname) {
+        super(context, dbname, null, DATABASE_VERSION);
         ctx = context;
         proc = new ProviderUtil(sk);
     }

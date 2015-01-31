@@ -22,16 +22,32 @@
 package com.peirr.provider;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.peirr.droidprovider.sqlite.BaseDataStore;
 import com.peirr.droidprovider.sqlite.BaseProvider;
 
 /**
- * Created by kurt on 1/1/14 - 12:30 PM.
+ *
+ * Created by kurt on 31 01 2015 .
+ *
  */
 public class DemoDataProvider extends BaseProvider {
 
     @Override
     public BaseDataStore getMyDB() {
-        return new DemoDataStore(getContext());
+        return new DemoDataStore(getContext(), getCurrentDB());
+    }
+
+    public String getCurrentDB() {
+        String dbname;
+        try {
+            SharedPreferences settings = getContext().getSharedPreferences(BaseDataStore.DATABASE_KEY, Context.MODE_PRIVATE);
+            dbname = settings.getString(BaseDataStore.DATABASE_KEY, BaseDataStore.DATABASE);
+        } catch (Exception e) {
+            dbname = BaseDataStore.DATABASE;
+        }
+        return dbname;
     }
 }

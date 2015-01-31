@@ -29,6 +29,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public abstract class BaseProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private BaseDataStore sqLite;
 
-    public static final Uri getContentUri(String contentString) {
+    public static Uri getContentUri(String contentString) {
         String string = contentString.replace("#AUTHORITY#", DroidProviderContract.CONTENT_AUTHORITY);
         return Uri.parse(string);
     }
@@ -131,7 +132,7 @@ public abstract class BaseProvider extends ContentProvider {
     }
 
     @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
         int rowsAffected = 0;
@@ -148,9 +149,7 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Unknown or Invalid URI for bulkInsert " + uri);
         }
-        int vlength = values.length;
-        for (int i = 0; i < vlength; i++) {
-            ContentValues cv = values[i];
+        for (ContentValues cv : values) {
             long newID = sqlDB.insert(table, null, cv);
             if (newID > 0) {
                 rowsAffected += 1;
