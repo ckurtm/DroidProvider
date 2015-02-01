@@ -19,12 +19,6 @@
  *
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
 apply plugin: 'com.android.application'
 
 android {
@@ -47,8 +41,7 @@ android {
 }
 
 dependencies {
-//    compile(group: 'mbanje.kurt', name: 'droidprovider', version: '1.0.0', ext: 'aar')
-    compile project(':droidprovider')
+    compile 'mbanje.kurt:droidprovider:1.0.0@aar'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
 }
