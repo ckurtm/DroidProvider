@@ -29,6 +29,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.List;
 
@@ -41,6 +42,8 @@ import java.util.List;
  */
 public abstract class BaseProvider extends ContentProvider {
 
+    String TAG = BaseProvider.class.getSimpleName();
+
     public static final int PROVIDE_TABLE = 0x029;
     public static final int PROVIDE_URI = 0x030;
     public static final int PROVIDE_KEY = 0x035;
@@ -51,6 +54,7 @@ public abstract class BaseProvider extends ContentProvider {
         String string = contentString.replace("#AUTHORITY#", DroidProviderContract.CONTENT_AUTHORITY);
         return Uri.parse(string);
     }
+
 
     @Override
     public boolean onCreate() {
@@ -92,9 +96,11 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Unknown or Invalid URI " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Log.d(TAG, "notify delete(" + rowsAffected + ")");
+        notifyChange(uri);
         return rowsAffected;
     }
+
 
     @Override
     public String getType(Uri uri) {
@@ -132,7 +138,8 @@ public abstract class BaseProvider extends ContentProvider {
         long newID = sqlDB.insert(table, null, values);
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
-            getContext().getContentResolver().notifyChange(uri, null);
+            Log.d(TAG, "notify insert()");
+            notifyChange(uri);
             return newUri;
         } else {
             throw new SQLException("Failed to insert row into " + uri);
@@ -163,7 +170,7 @@ public abstract class BaseProvider extends ContentProvider {
                 rowsAffected += 1;
             }
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        notifyChange(uri);
         return rowsAffected;
     }
 
@@ -185,9 +192,10 @@ public abstract class BaseProvider extends ContentProvider {
             throw new IllegalArgumentException("Unknown URI");
         }
         Cursor cursor = queryBuilder.query(sqLite.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        registerUri(cursor, uri);
         return cursor;
     }
+
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
@@ -206,7 +214,17 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Unknown or Invalid URI " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        notifyChange(uri);
         return rowsAffected;
+    }
+
+    private void notifyChange(Uri uri) {
+        Log.d(TAG, "notifyChange() [uri: " + uri + "]");
+        getContext().getContentResolver().notifyChange(uri, null);
+    }
+
+    private void registerUri(Cursor cursor, Uri uri) {
+        Log.d(TAG, "registerUri() [uri: " + uri + "]");
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
     }
 }

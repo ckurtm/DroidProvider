@@ -466,7 +466,6 @@ public class ProviderUtil {
             T obj = getRow(cursor, clazz);
             list.add(obj);
         }
-        cursor.close();
         return list;
     }
 
