@@ -5,8 +5,7 @@
  
  
  
- HOW TO ADD TO YOUR PROJECT
- ==============
+# HOW TO ADD TO YOUR PROJECT
 
  Gradle:
  
@@ -20,8 +19,7 @@
  }
  ```
 
- USAGE
- =============
+# USAGE
 
  Check the demo app.
 
