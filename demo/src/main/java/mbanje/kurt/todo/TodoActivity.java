@@ -169,12 +169,8 @@ public class TodoActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null) {
-            try {
-                List<TodoItem> items = ProviderUtil.getRows(cursor, TodoItem.class);
-                updateView(items);
-            } catch (Exception e) {
-                Log.e(TAG, "error retreiving todo list", e);
-            }
+            List<TodoItem> items = ProviderUtil.getRows(cursor, TodoItem.class);
+            updateView(items);
         }
         Log.d(TAG, "adapter updated");
     }
