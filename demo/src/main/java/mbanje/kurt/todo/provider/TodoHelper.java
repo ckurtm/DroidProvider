@@ -37,49 +37,29 @@ public class TodoHelper {
     static String TAG = TodoHelper.class.getSimpleName();
 
     public static Uri createTodo(ContentResolver resolver, TodoItem item) {
-        try {
-            Uri uri = resolver.insert(TodoItem.CONTENT_URI, ProviderUtil.getContentValues(item, false));
-            if (uri != null) {
-                Log.d(TAG, "added new task");
-            }
-            return uri;
-        } catch (Exception e) {
-            Log.e(TAG, "error adding item...", e);
+        Uri uri = resolver.insert(TodoItem.CONTENT_URI, ProviderUtil.getContentValues(item, false));
+        if (uri != null) {
+            Log.d(TAG, "added new task");
         }
-        return null;
+        return uri;
     }
 
     public static int deleteTodo(ContentResolver resolver, TodoItem item) {
-        try {
-            int result = resolver.delete(TodoItem.CONTENT_URI, TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(item._id)});
-            if (result > 0) {
-                Log.d(TAG, "deleted task");
-            }
-            return result;
-        } catch (Exception e) {
-            Log.e(TAG, "error deleting item: ", e);
+        int result = resolver.delete(TodoItem.CONTENT_URI, TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(item._id)});
+        if (result > 0) {
+            Log.d(TAG, "deleted task");
         }
-        return -1;
+        return result;
     }
 
     public static TodoItem getTodo(ContentResolver resolver, long id) {
-        try {
-            Cursor cursor = resolver.query(TodoItem.CONTENT_URI, null, TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(id)}, null);
-            cursor.moveToFirst();
-            return ProviderUtil.getRow(cursor, TodoItem.class);
-        } catch (Exception e) {
-            Log.e(TAG, "error getting item: ", e);
-        }
-        return null;
+        Cursor cursor = resolver.query(TodoItem.CONTENT_URI, null, TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(id)}, null);
+        cursor.moveToFirst();
+        return ProviderUtil.getRow(cursor, TodoItem.class);
     }
 
     public static int updateTodo(ContentResolver resolver, TodoItem item) {
-        try {
-            return resolver.update(TodoItem.CONTENT_URI, ProviderUtil.getContentValues(item, true), TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(item._id)});
-        } catch (Exception e) {
-            Log.e(TAG, "error updating item...", e);
-        }
-        return -1;
+        return resolver.update(TodoItem.CONTENT_URI, ProviderUtil.getContentValues(item, true), TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(item._id)});
     }
 
     public static void deleteAll(ContentResolver resolver) {
