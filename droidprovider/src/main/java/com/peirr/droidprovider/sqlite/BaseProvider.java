@@ -47,7 +47,7 @@ public abstract class BaseProvider extends ContentProvider {
     public static final int PROVIDE_URI = 0x030;
     public static final int PROVIDE_KEY = 0x035;
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private BaseDataStore sqLite;
+    private BaseDataStore sqliteHelper;
 
     public static Uri getContentUri(String contentString) {
         String string = contentString.replace("#AUTHORITY#", DroidProviderContract.CONTENT_AUTHORITY);
@@ -57,9 +57,9 @@ public abstract class BaseProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        sqLite = getMyDB();
+        sqliteHelper = getMyDB();
         String authority = DroidProviderContract.CONTENT_AUTHORITY;
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             sURIMatcher.addURI(authority, pv.TABLE, pv.MANY);
             sURIMatcher.addURI(authority, pv.TABLE + "/#", pv.ONE);
@@ -68,6 +68,19 @@ public abstract class BaseProvider extends ContentProvider {
     }
 
     public abstract BaseDataStore getMyDB();
+
+
+    public void resetDB() {
+        sqliteHelper.close();
+        sqliteHelper = getMyDB();
+        //notify everyone that db has changed
+        String authority = DroidProviderContract.CONTENT_AUTHORITY;
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
+        for (ProviderObjectValue pv : valueList) {
+            Uri uri = Uri.fromParts(authority, pv.TABLE, "");
+            notifyChange(uri);
+        }
+    }
 
     /**
      * gets the name of the current db
@@ -81,10 +94,10 @@ public abstract class BaseProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
+        SQLiteDatabase sqlDB = sqliteHelper.getWritableDatabase();
         int rowsAffected = 0;
         boolean found = false;
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if (uriType == pv.MANY || uriType == pv.ONE) {
                 found = true;
@@ -104,7 +117,7 @@ public abstract class BaseProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         int uriType = sURIMatcher.match(uri);
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if (uriType == pv.MANY) {
                 return pv.TYPE;
@@ -122,7 +135,7 @@ public abstract class BaseProvider extends ContentProvider {
         int uriType = sURIMatcher.match(uri);
         boolean found = false;
         String table = "";
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if (uriType == pv.MANY) {
                 table = pv.TABLE;
@@ -133,7 +146,7 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Invalid URI for insertion");
         }
-        SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
+        SQLiteDatabase sqlDB = sqliteHelper.getWritableDatabase();
         long newID = sqlDB.insert(table, null, values);
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
@@ -148,11 +161,11 @@ public abstract class BaseProvider extends ContentProvider {
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
+        SQLiteDatabase sqlDB = sqliteHelper.getWritableDatabase();
         int rowsAffected = 0;
         boolean found = false;
         String table = "";
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if (uriType == pv.MANY) {
                 found = true;
@@ -178,7 +191,7 @@ public abstract class BaseProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         int uriType = sURIMatcher.match(uri);
         boolean found = false;
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if ((uriType == pv.ONE) || (uriType == pv.MANY)) {
                 queryBuilder.setTables(pv.TABLE);
@@ -190,7 +203,7 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Unknown URI");
         }
-        Cursor cursor = queryBuilder.query(sqLite.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(sqliteHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
         registerUri(cursor, uri);
         return cursor;
     }
@@ -199,10 +212,10 @@ public abstract class BaseProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = sqLite.getWritableDatabase();
+        SQLiteDatabase sqlDB = sqliteHelper.getWritableDatabase();
         int rowsAffected = 0;
         boolean found = false;
-        List<ProviderObjectValue> valueList = sqLite.getObjectValues();
+        List<ProviderObjectValue> valueList = sqliteHelper.getObjectValues();
         for (ProviderObjectValue pv : valueList) {
             if (uriType == pv.MANY || uriType == pv.ONE) {
                 found = true;
