@@ -19,13 +19,18 @@
 
 package mbanje.kurt.todo;
 
+import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 
+import com.peirr.provider.ProviderContract;
+
 import java.io.IOException;
 
+import mbanje.kurt.todo.provider.TodoDataStore;
 import mbanje.kurt.todo.provider.TodoHelper;
 import mbanje.kurt.todo.provider.TodoProvider;
 
@@ -80,5 +85,17 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
         int result = TodoHelper.deleteTodo(resolver, upItem);
         assertEquals(1, result);
     }
+
+    public void testCanGetProviderAndDB() throws Exception {
+        ContentProviderClient client = resolver.acquireContentProviderClient(ProviderContract.CONTENT_AUTHORITY);
+        assertNotNull(client);
+        ContentProvider contentProvider = client.getLocalContentProvider();
+        assertNotNull(contentProvider);
+        TodoProvider provider = (TodoProvider) contentProvider;
+        assertNotNull(provider);
+        TodoDataStore dataStore = (TodoDataStore) provider.getMyDB();
+        assertNotNull(dataStore);
+    }
+
 
 }

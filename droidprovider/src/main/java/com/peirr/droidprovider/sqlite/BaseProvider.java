@@ -29,7 +29,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.List;
 
@@ -96,7 +95,7 @@ public abstract class BaseProvider extends ContentProvider {
         if (!found) {
             throw new IllegalArgumentException("Unknown or Invalid URI " + uri);
         }
-        Log.d(TAG, "notify delete(" + rowsAffected + ")");
+//        Log.d(TAG, "notify delete(" + rowsAffected + ")");
         notifyChange(uri);
         return rowsAffected;
     }
@@ -138,7 +137,7 @@ public abstract class BaseProvider extends ContentProvider {
         long newID = sqlDB.insert(table, null, values);
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
-            Log.d(TAG, "notify insert()");
+//            Log.d(TAG, "notify insert()");
             notifyChange(uri);
             return newUri;
         } else {
@@ -219,12 +218,12 @@ public abstract class BaseProvider extends ContentProvider {
     }
 
     private void notifyChange(Uri uri) {
-        Log.d(TAG, "notifyChange() [uri: " + uri + "]");
+//        Log.d(TAG, "notifyChange() [uri: " + uri + "]");
         getContext().getContentResolver().notifyChange(uri, null);
     }
 
     private void registerUri(Cursor cursor, Uri uri) {
-        Log.d(TAG, "registerUri() [uri: " + uri + "]");
+//        Log.d(TAG, "registerUri() [uri: " + uri + "]");
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
     }
 }

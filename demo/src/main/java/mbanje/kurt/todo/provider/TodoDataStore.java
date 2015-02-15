@@ -39,13 +39,6 @@ public class TodoDataStore extends BaseDataStore {
         super(context, "base");
     }
 
-//    @Override
-//    public List<Class<? extends ObjectTable>> getDefinedClasses() {
-//        List<Class<? extends ObjectTable>> tables = new ArrayList<Class<? extends ObjectTable>>();
-//        tables.add(TodoItem.class);
-//        return tables;
-//    }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
