@@ -30,9 +30,9 @@ import com.peirr.provider.ProviderContract;
 
 import java.io.IOException;
 
-import mbanje.kurt.todo.provider.TodoDataStore;
 import mbanje.kurt.todo.provider.TodoHelper;
 import mbanje.kurt.todo.provider.TodoProvider;
+import mbanje.kurt.todo.provider.TodoSqlHelper;
 
 /**
  * Created by kurt on 2014/07/19.
@@ -93,7 +93,7 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
         assertNotNull(contentProvider);
         TodoProvider provider = (TodoProvider) contentProvider;
         assertNotNull(provider);
-        TodoDataStore dataStore = (TodoDataStore) provider.getMyDB();
+        TodoSqlHelper dataStore = (TodoSqlHelper) provider.getMyDB();
         assertNotNull(dataStore);
     }
 

@@ -19,15 +19,15 @@
 
 package mbanje.kurt.todo.provider;
 
-import com.peirr.droidprovider.sqlite.BaseDataStore;
 import com.peirr.droidprovider.sqlite.BaseProvider;
+import com.peirr.droidprovider.sqlite.BaseSqlHelper;
 
 /**
  * Created by kurt on 2014/07/18.
  */
 public class TodoProvider extends BaseProvider {
     @Override
-    public BaseDataStore getMyDB() {
-        return new TodoDataStore(getContext());
+    public BaseSqlHelper getMyDB() {
+        return new TodoSqlHelper(getContext());
     }
 }

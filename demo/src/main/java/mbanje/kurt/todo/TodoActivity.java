@@ -1,12 +1,16 @@
 package mbanje.kurt.todo;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.LoaderManager;
+import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,35 +23,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
+import com.peirr.provider.ProviderContract;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import mbanje.kurt.todo.provider.TodoHelper;
+import mbanje.kurt.todo.provider.TodoProvider;
+import mbanje.kurt.todo.utils.Settings;
+import mbanje.kurt.todo.utils.TodoUtils;
 import mbanje.kurt.todo.widget.ProgressView;
 
 
-public class TodoActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TodoActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private String TAG = TodoActivity.class.getSimpleName();
-    private TextView completed;
+    private TextView completed, databaseFile;
     private ProgressView progressBar;
     private TodoAdapter adapter;
     private List<TodoItem> list = new ArrayList<TodoItem>();
     private ListView listView;
-
+    private SwitchCompat toggle;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         completed = (TextView) findViewById(R.id.todo_list_percent);
         listView = (ListView) findViewById(R.id.todo_list_items);
+        databaseFile = (TextView) findViewById(R.id.database);
+        toggle = (SwitchCompat) findViewById(R.id.todo_switch_db);
 
 //        View empty =  View.inflate(this,R.layout.todo_empty,null);
         View empty = getLayoutInflater().inflate(R.layout.todo_empty, null, false);
@@ -113,7 +129,40 @@ public class TodoActivity extends Activity implements LoaderManager.LoaderCallba
             }
         });
 
-        getLoaderManager().initLoader(0, null, this);
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String dbfile = "testdb";
+                if (isChecked) {
+                    dbfile = "base";
+                }
+                databaseFile.setText(Html.fromHtml(getString(R.string.todo_db_file, dbfile)));
+                updateDbFile(dbfile);
+            }
+        });
+
+
+        getLoaderManager().restartLoader(0, null, this);
+        String dbPath = TodoUtils.getDataBasePath(this);
+        try {
+            TodoUtils.copyDbAsset(this, "testdb", dbPath);
+        } catch (IOException e) {
+            Log.e(TAG, "error", e);
+        }
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String dbname = getDatabaseName();
+        boolean checked = dbname.equalsIgnoreCase("base");
+        databaseFile.setText(Html.fromHtml(getString(R.string.todo_db_file, dbname)));
+
+        toggle.setChecked(checked);
     }
 
     /**
@@ -253,6 +302,25 @@ public class TodoActivity extends Activity implements LoaderManager.LoaderCallba
         });
         dialog.setContentView(view);
         dialog.show();
+    }
+
+
+    private void updateDbFile(String file) {
+        Settings settings = new Settings(this);
+        settings.setString(Settings.PREF_DATABASE, file);
+        getContentProvider().reset();
+    }
+
+    private String getDatabaseName() {
+        TodoProvider provider = getContentProvider();
+        return provider.getProviderDatabaseName();
+    }
+
+
+    private TodoProvider getContentProvider() {
+        ContentProviderClient client = getContentResolver().acquireContentProviderClient(ProviderContract.CONTENT_AUTHORITY);
+        ContentProvider contentProvider = client.getLocalContentProvider();
+        return (TodoProvider) contentProvider;
     }
 
 }

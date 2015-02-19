@@ -51,8 +51,8 @@ import javax.crypto.NoSuchPaddingException;
  * @author kurt
  *         PLAYING [Say My Name (Cyril Hahn Remix)]
  */
-public abstract class BaseDataStore extends SQLiteSecureHelper {
-    String tag = BaseDataStore.class.getSimpleName();
+public abstract class BaseSqlHelper extends SQLiteSecureHelper {
+    String tag = BaseSqlHelper.class.getSimpleName();
     private List<ProviderObjectValue> objectValues = new ArrayList<>();
     private Map<String, Class<?>> definedObjs;
     private Context context;
@@ -63,7 +63,7 @@ public abstract class BaseDataStore extends SQLiteSecureHelper {
      * @param context The context
      * @param dbFile  the db file name
      */
-    public BaseDataStore(Context context, String dbFile) {
+    public BaseSqlHelper(Context context, String dbFile) {
         super(context, dbFile);
         this.context = context;
         try {

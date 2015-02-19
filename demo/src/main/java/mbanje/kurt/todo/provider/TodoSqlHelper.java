@@ -21,27 +21,37 @@ package mbanje.kurt.todo.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.peirr.droidprovider.sqlite.BaseDataStore;
+import com.peirr.droidprovider.sqlite.BaseSqlHelper;
 import com.peirr.droidprovider.sqlite.annotations.ObjectRow;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import mbanje.kurt.todo.TodoItem;
+import mbanje.kurt.todo.utils.Settings;
 
 /**
  * Created by kurt on 2014/07/18.
  */
-public class TodoDataStore extends BaseDataStore {
+public class TodoSqlHelper extends BaseSqlHelper {
+    static String TAG = TodoSqlHelper.class.getSimpleName();
 
-    public TodoDataStore(Context context) {
-        super(context, "base");
+    public TodoSqlHelper(Context context) {
+        super(context, getFilename(context));
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    public static String getFilename(Context context) {
+        Settings settings = new Settings(context);
+        final String filename = settings.getString(Settings.PREF_DATABASE, TodoSqlHelper.DATABASE);
+        Log.d(TAG, "loading db file: " + filename);
+        return filename;
     }
 
     @Override
@@ -50,4 +60,6 @@ public class TodoDataStore extends BaseDataStore {
         tables.add(TodoItem.class);
         return tables;
     }
+
+
 }
