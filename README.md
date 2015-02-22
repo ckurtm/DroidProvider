@@ -10,10 +10,6 @@
  Gradle:
  
  ```groovy
- repositories {
-    jcenter()
- }
-
  dependencies {
          compile 'mbanje.kurt:droidprovider:1.2.1'
  }
