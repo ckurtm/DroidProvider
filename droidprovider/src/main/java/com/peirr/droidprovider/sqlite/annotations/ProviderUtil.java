@@ -164,7 +164,6 @@ public class ProviderUtil {
      * @param obj            - object instance that you would like to get content values from. This should be a class extending from the ObjectRow class
      * @param includePrimary - if true, then include the primary key as part of the content values
      * @return the actual content values
-     * @throws java.lang.Exception if something goes wrong
      */
     public static ContentValues getContentValues(Object obj, boolean... includePrimary) {
         //		Log.d(tag,"getContentValues: " + obj);
