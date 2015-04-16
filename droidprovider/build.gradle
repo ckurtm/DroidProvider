@@ -22,20 +22,20 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "1.4.0"
+version = "1.5.0"
 group = "mbanje.kurt"
 
 def siteUrl = 'https://github.com/ckurtm/DroidProvider'
 def gitUrl = 'https://github.com/ckurtm/DroidProvider.git'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 4
+        targetSdkVersion 22
+        versionCode 5
         versionName version
     }
 }

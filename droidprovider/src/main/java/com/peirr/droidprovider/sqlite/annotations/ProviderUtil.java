@@ -467,7 +467,7 @@ public class ProviderUtil {
      * @return a list of object instances bound to the class type supplied
      * @throws Exception when something goes wrong
      */
-    public static <T extends ObjectRow> List<T> getRows(Cursor cursor, Class<T> clazz) {
+    private static <T extends ObjectRow> List<T> getRows(Cursor cursor, Class<T> clazz) {
         List<T> list = new ArrayList<T>();
         cursor.moveToPosition(-1);
         while (cursor.moveToNext()) {
@@ -479,6 +479,15 @@ public class ProviderUtil {
             }
         }
         return list;
+    }
+
+
+    public static <T extends ObjectRow> List<T> getRows(Cursor cursor, Class<T> clazz,boolean closeCursor){
+        List<T> rows = getRows(cursor,clazz);
+        if(closeCursor){
+            cursor.close();
+        }
+        return rows;
     }
 
     /**
