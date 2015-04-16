@@ -370,7 +370,6 @@ public class ProviderUtil {
      * @param cursor the query cursor
      * @param <T>    the class type
      * @return the object instance of the supplied clazz with data bound from the supplied cursor
-     * @throws java.lang.Exception if something goes wrong
      */
     public static <T extends ObjectRow> T getRow(Cursor cursor, Class<T> clazz) {
         T object = null;
@@ -449,7 +448,6 @@ public class ProviderUtil {
      * @param moveTonext if true then the cursor will be moved to next row before binding starts
      * @param <T>        the class type
      * @return the object instace bound to the class type supplied
-     * @throws Exception when something goess wrong
      */
     public static <T extends ObjectRow> T getRow(Cursor cursor, Class<T> clazz, boolean moveTonext) {
         if (moveTonext)
@@ -464,7 +462,6 @@ public class ProviderUtil {
      * @param cursor the query cursor
      * @param <T>    the class type
      * @return a list of object instances bound to the class type supplied
-     * @throws Exception when something goes wrong
      */
     private static <T extends ObjectRow> List<T> getRows(Cursor cursor, Class<T> clazz) {
         List<T> list = new ArrayList<T>();
