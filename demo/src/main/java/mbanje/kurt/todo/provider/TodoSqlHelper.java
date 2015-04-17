@@ -48,10 +48,12 @@ public class TodoSqlHelper extends BaseSqlHelper {
     }
 
     public static String getFilename(Context context) {
-        Settings settings = new Settings(context);
-        final String filename = settings.getString(Settings.PREF_DATABASE, TodoSqlHelper.DATABASE);
-        Log.d(TAG, "loading db file: " + filename);
-        return filename;
+        try {
+            Settings settings = new Settings(context);
+            return settings.getString(Settings.PREF_DATABASE, TodoSqlHelper.DATABASE);
+        }catch (Exception e){
+            return  TodoSqlHelper.DATABASE;
+        }
     }
 
     @Override

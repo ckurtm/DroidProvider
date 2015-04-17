@@ -37,7 +37,7 @@ public class TodoItem extends ObjectRow {
     public static final android.net.Uri CONTENT_URI = BaseProvider.getContentUri("content://#AUTHORITY#/" + TABLE);
 
     @DroidProvider(BaseProvider.PROVIDE_KEY)
-    public static final String KEY = Mapper._ID;
+    public static final String KEY = Mapper.label;
 
     @DroidColumn(name = Mapper.label)
     public String label;

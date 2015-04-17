@@ -199,11 +199,16 @@ public abstract class BaseProvider extends ContentProvider {
                 found = true;
                 break;
             }
+
+            if(uriType == pv.ONE){
+                selection = selection + pv.KEY + "= " + uri.getLastPathSegment();
+            }
         }
 
         if (!found) {
             throw new IllegalArgumentException("Unknown URI");
         }
+
         Cursor cursor = queryBuilder.query(sqlOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
         registerUri(cursor, uri);
         return cursor;

@@ -63,6 +63,24 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
     }
 
 
+    public void testInsertQuery() throws IOException {
+        //INSERT
+        TodoItem item = new TodoItem("one2", "the description", false);
+        Uri uri = TodoHelper.createTodo(resolver, item);
+        assertNotNull(uri);
+        long id = ContentUris.parseId(uri);
+
+        //QUERY by ID
+        TodoItem upItem = TodoHelper.getTodo(resolver, id);
+        assertNotNull(upItem);
+        assertEquals("one2", upItem.label);
+
+        //QUERY by Key
+        upItem = TodoHelper.getTodo(resolver, "one2");
+        assertNotNull(upItem);
+        assertEquals("one2", upItem.label);
+    }
+
     public void testInsertUpdateQueryDelete() throws Exception {
         //INSERT
         TodoItem item = new TodoItem("one", "the description", false);

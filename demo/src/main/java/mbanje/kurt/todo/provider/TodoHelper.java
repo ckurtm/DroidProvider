@@ -58,6 +58,12 @@ public class TodoHelper {
         return ProviderUtil.getRow(cursor, TodoItem.class);
     }
 
+    public static TodoItem getTodo(ContentResolver resolver, String id) {
+        Cursor cursor = resolver.query(TodoItem.CONTENT_URI, null, TodoItem.Mapper.label + "=?", new String[]{id}, null);
+        cursor.moveToFirst();
+        return ProviderUtil.getRow(cursor, TodoItem.class);
+    }
+
     public static int updateTodo(ContentResolver resolver, TodoItem item) {
         return resolver.update(TodoItem.CONTENT_URI, ProviderUtil.getContentValues(item, true), TodoItem.Mapper._ID + "=?", new String[]{String.valueOf(item._id)});
     }
