@@ -22,10 +22,14 @@ package mbanje.kurt.todo;
 import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
+import android.util.Log;
 
+import com.peirr.droidprovider.sqlite.annotations.ProviderUtil;
 import com.peirr.provider.ProviderContract;
 
 import java.io.IOException;
@@ -38,6 +42,7 @@ import mbanje.kurt.todo.provider.TodoSqlHelper;
  * Created by kurt on 2014/07/19.
  */
 public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
+    String TAG = TodoHelperTest.class.getSimpleName();
     private MockContentResolver resolver;
 
     public TodoHelperTest() {
@@ -116,4 +121,32 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
     }
 
 
+    public void testPerfomance() throws Exception {
+//        resolver.delete(TodoItem.CONTENT_URI,null,null);
+        int sample = 10;
+        long[] values = new long[sample];
+        for (int index = 0; index < sample ; index++) {
+            long start = SystemClock.uptimeMillis();
+            runInsertionTest(1000);
+            values[index] = SystemClock.uptimeMillis() - start;
+            Log.d(TAG,"...["+index+"] " + values[index] + " ...");
+        }
+
+        long total = 0;
+        for (int i = 0; i < sample; i++) {
+            total += values[i];
+        }
+
+        Log.d(TAG,"[sample:"+sample+"] [average:"+ ((float)total/(float)sample) + "]");
+    }
+
+
+
+    private void runInsertionTest(int count) throws Exception {
+        for (int i = 0; i < count; i++) {
+            TodoItem item = ProviderUtil.createDummyInstance(TodoItem.class);
+            ContentValues values = ProviderUtil.getContentValues(item,false);
+//            resolver.insert(TodoItem.CONTENT_URI,ProviderUtil.getContentValues(item,false));
+        }
+    }
 }

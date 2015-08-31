@@ -42,15 +42,13 @@ public class ObjectRow {
 
         ObjectRow objectRow = (ObjectRow) o;
 
-        if (_id != objectRow._id) return false;
+        return _id == objectRow._id;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (_id ^ (_id >>> 32));
-        return result;
+        return (int) (_id ^ (_id >>> 32));
     }
 
 }

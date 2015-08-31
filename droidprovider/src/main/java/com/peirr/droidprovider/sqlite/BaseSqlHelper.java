@@ -52,7 +52,7 @@ import javax.crypto.NoSuchPaddingException;
  *         PLAYING [Say My Name (Cyril Hahn Remix)]
  */
 public abstract class BaseSqlHelper extends SQLiteSecureHelper {
-    String tag = BaseSqlHelper.class.getSimpleName();
+    private String tag = BaseSqlHelper.class.getSimpleName();
     private List<ProviderObjectValue> objectValues = new ArrayList<>();
     private Map<String, Class<?>> definedObjs;
     private Context context;
@@ -94,7 +94,7 @@ public abstract class BaseSqlHelper extends SQLiteSecureHelper {
      * @throws NoSuchFieldException     if something goes wrong
      * @throws IllegalAccessException   if something goes wrong
      */
-    public Map<String, Class<?>> getDefinedObjects() throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+    private Map<String, Class<?>> getDefinedObjects() throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
         Map<String, Class<?>> objects = new HashMap<>();
         List<Class<? extends ObjectRow>> definedClasses = getDefinedClasses();
         for (Class<?> clazz : definedClasses) {
@@ -140,7 +140,7 @@ public abstract class BaseSqlHelper extends SQLiteSecureHelper {
      * @throws ClassNotFoundException             if something goes wrong
      * @throws IllegalBlockSizeException          if something goes wrong
      */
-    public void createObjectValues() throws NoSuchAlgorithmException, NoSuchFieldException, InvalidKeyException,
+    private void createObjectValues() throws NoSuchAlgorithmException, NoSuchFieldException, InvalidKeyException,
             IllegalAccessException, NoSuchPaddingException, BadPaddingException, InvalidAlgorithmParameterException,
             UnsupportedEncodingException, ClassNotFoundException, IllegalBlockSizeException {
         objectValues.clear();

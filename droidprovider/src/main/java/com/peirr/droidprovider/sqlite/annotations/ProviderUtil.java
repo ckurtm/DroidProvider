@@ -100,7 +100,7 @@ public class ProviderUtil {
     private static String getFields(String className, Integer prefix) throws ClassNotFoundException {
         //		Log.d(tag,"getFields [class:"+className+"]");
         String columns;
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
         Class<?> clazz = Class.forName(className);
         Field[] privateFields = clazz.getDeclaredFields();
@@ -109,7 +109,8 @@ public class ProviderUtil {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
@@ -118,7 +119,8 @@ public class ProviderUtil {
         //		queryBuilder.append("CREATE TABLE " + table + " (");
         boolean firstField = true;
         boolean added = false;
-        for (Field field : fields) {
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidColumn.class);
             if (!Modifier.isStatic(field.getModifiers()) && (annotation != null) && !((DroidColumn) annotation).name().equals("_id")) {
                 if (!firstField) {
@@ -133,17 +135,18 @@ public class ProviderUtil {
                     queryBuilder.append("TEXT");
                 }
 
-                if (field.getType() == Integer.TYPE) {
+                Class<?> type = field.getType();
+                if (type == Integer.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Long.TYPE) {
+                } else if (type == Long.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Boolean.TYPE) {
+                } else if (type == Boolean.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Float.TYPE) {
+                } else if (type == Float.TYPE) {
                     queryBuilder.append("REAL");
-                } else if (field.getType() == Double.TYPE) {
+                } else if (type == Double.TYPE) {
                     queryBuilder.append("REAL");
-                } else if (Date.class.isAssignableFrom(field.getType())) {
+                } else if (Date.class.isAssignableFrom(type)) {
                     queryBuilder.append("INTEGER");
                 }
             }
@@ -168,7 +171,7 @@ public class ProviderUtil {
     public static ContentValues getContentValues(Object obj, boolean... includePrimary) {
         //		Log.d(tag,"getContentValues: " + obj);
         ContentValues cv = new ContentValues();
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         List<FieldValue> mergeFields = new ArrayList<FieldValue>();//list of all merged fields
 
         try {
@@ -180,51 +183,55 @@ public class ProviderUtil {
                 Collections.addAll(fields, privateFields);
             }
             if (publicFields != null) {
-                for (Field pf : publicFields) {
+                for (int i=0,size=publicFields.length;i<size;i++) {
+                    Field pf = publicFields[i];
                     if (!fields.contains(pf)) {
                         fields.add(pf);
                     }
                 }
             }
 
-            for (Field field : fields) {
+            for (int i=0,size=fields.size();i<size;i++) {
+                Field field = fields.get(i);
                 Annotation annotation = field.getAnnotation(DroidColumn.class);
                 if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                     if (!((DroidColumn) annotation).name().equals("_id")) {
                         DroidColumn col = (DroidColumn) annotation;
                         //                    LOG.d(tag,"getField: " + field.getName());
-                        Field isf = field;
-                        if (isf.getModifiers() == Modifier.PRIVATE) {
-                            isf.setAccessible(true);
+                        if (field.getModifiers() == Modifier.PRIVATE) {
+                            field.setAccessible(true);
                         }
-                        if (String.class.isAssignableFrom(field.getType())) {
-                            String val = (String) isf.get(obj);
-                            cv.put(col.name(), val);
-                        } else if (field.getType() == Integer.TYPE) {
-                            int val = isf.getInt(obj);
-                            cv.put(col.name(), val);
-                        } else if (field.getType() == Long.TYPE) {
-                            long val = isf.getLong(obj);
-                            cv.put(col.name(), val);
-                        } else if (field.getType() == Boolean.TYPE) {
-                            boolean val = isf.getBoolean(obj);
-                            cv.put(col.name(), val ? 1 : 0);
-                        } else if (field.getType() == Float.TYPE) {
-                            float val = isf.getFloat(obj);
-                            cv.put(col.name(), val);
-                        } else if (field.getType() == Double.TYPE) {
-                            double val = isf.getDouble(obj);
-                            cv.put(col.name(), val);
-                        } else if (Date.class.isAssignableFrom(field.getType())) {
-                            Date date = (Date) isf.get(obj);
+
+                        Class<?> type = field.getType();
+                        final String colName = col.name();
+                        if (String.class.isAssignableFrom(type)) {
+                            String val = (String) field.get(obj);
+                            cv.put(colName, val);
+                        } else if (type == Integer.TYPE) {
+                            int val = field.getInt(obj);
+                            cv.put(colName, val);
+                        } else if (type == Long.TYPE) {
+                            long val = field.getLong(obj);
+                            cv.put(colName, val);
+                        } else if (type == Boolean.TYPE) {
+                            boolean val = field.getBoolean(obj);
+                            cv.put(colName, val ? 1 : 0);
+                        } else if (type == Float.TYPE) {
+                            float val = field.getFloat(obj);
+                            cv.put(colName, val);
+                        } else if (type == Double.TYPE) {
+                            double val = field.getDouble(obj);
+                            cv.put(colName, val);
+                        } else if (Date.class.isAssignableFrom(type)) {
+                            Date date = (Date) field.get(obj);
                             if (date != null)
-                                cv.put(col.name(), date.getTime());
-                        } else if (BigDecimal.class.isAssignableFrom(field.getType())) {
-                            BigDecimal bigDecimal = (BigDecimal) isf.get(obj);
-                            cv.put(col.name(), bigDecimal.toEngineeringString());
+                                cv.put(colName, date.getTime());
+                        } else if (BigDecimal.class.isAssignableFrom(type)) {
+                            BigDecimal bigDecimal = (BigDecimal) field.get(obj);
+                            cv.put(colName, bigDecimal.toEngineeringString());
                         }
-                        if (isf.getModifiers() == Modifier.PRIVATE) {
-                            isf.setAccessible(false);
+                        if (field.getModifiers() == Modifier.PRIVATE) {
+                            field.setAccessible(false);
                         }
 
                     }
@@ -240,9 +247,7 @@ public class ProviderUtil {
             }
 
             if (mergeFields.size() > 0) {
-                //			int prefix = 0;
                 for (FieldValue o : mergeFields) {
-                    //				prefix++;
                     if (o != null) {
                         ContentValues values = getContentValues(o.object, false);
                         for (Map.Entry<String, Object> kv : values.valueSet()) {
@@ -251,7 +256,7 @@ public class ProviderUtil {
                     }
                 }
             }
-        } catch (ClassNotFoundException | IllegalAccessException e) {
+        } catch (Exception e) {
             Log.e(TAG, "failed to get content values", e);
         }
         return cv;
@@ -269,20 +274,22 @@ public class ProviderUtil {
     public static String[] getMetaDaTa(Class<?> clazz) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         //		Log.d(tag,"getMetadata() " + clazz.getName());
         String[] metadata = new String[2];
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
         if (privateFields != null) {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
             }
         }
-        for (Field field : fields) {
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidProvider.class);
             if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                 DroidProvider col = (DroidProvider) annotation;
@@ -324,21 +331,22 @@ public class ProviderUtil {
     public static ProviderObjectValue getProviderValues(Class<?> clazz) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         //        LOG.d(tag,"getContentValues: " + obj);
         ProviderObjectValue pv = new ProviderObjectValue();
-        List<Field> fields = new ArrayList<Field>();
-        //		Class<?> clazz = obj.getClass();
+        ArrayList<Field> fields = new ArrayList<>();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
         if (privateFields != null) {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
             }
         }
-        for (Field field : fields) {
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidProvider.class);
             if (Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                 DroidProvider col = (DroidProvider) annotation;
@@ -375,7 +383,7 @@ public class ProviderUtil {
         T object = null;
         try {
             object = clazz.newInstance();
-            List<Field> fields = new ArrayList<Field>();
+            ArrayList<Field> fields = new ArrayList<>();
             Field[] privateFields = clazz.getDeclaredFields();
             Field[] publicFields = clazz.getFields();
             List<FieldValue> mergeFields = new ArrayList<FieldValue>(); //list of all merge fields
@@ -384,35 +392,39 @@ public class ProviderUtil {
                 Collections.addAll(fields, privateFields);
             }
             if (publicFields != null) {
-                for (Field pf : publicFields) {
+                for (int i=0,size=publicFields.length;i<size;i++) {
+                    Field pf = publicFields[i];
                     if (!fields.contains(pf)) {
                         fields.add(pf);
                     }
                 }
             }
 
-            for (Field field : fields) {
+            for (int i=0,size=fields.size();i<size;i++) {
+                Field field = fields.get(i);
                 Annotation annotation = field.getAnnotation(DroidColumn.class);
                 if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                     DroidColumn col = (DroidColumn) annotation;
                     if (field.getModifiers() == Modifier.PRIVATE) {
                         field.setAccessible(true);
                     }
-                    if (String.class.isAssignableFrom(field.getType())) {
+                    Class<?> type = field.getType();
+                    final String colName = col.name();
+                    if (String.class.isAssignableFrom(type)) {
                         //                        LOG.d(tag, "[column: " + col.name() + "]");
-                        field.set(object, cursor.getString(cursor.getColumnIndex(col.name())));
-                    } else if (field.getType() == Integer.TYPE) {
-                        field.set(object, cursor.getInt(cursor.getColumnIndex(col.name())));
-                    } else if (field.getType() == Long.TYPE) {
-                        field.set(object, cursor.getLong(cursor.getColumnIndex(col.name())));
-                    } else if (field.getType() == Boolean.TYPE) {
-                        field.set(object, cursor.getInt(cursor.getColumnIndex(col.name())) > 0);
-                    } else if (field.getType() == Float.TYPE) {
-                        field.set(object, cursor.getFloat(cursor.getColumnIndex(col.name())));
-                    } else if (field.getType() == Double.TYPE) {
-                        field.set(object, cursor.getDouble(cursor.getColumnIndex(col.name())));
-                    } else if (Date.class.isAssignableFrom(field.getType())) {
-                        field.set(object, new Date(cursor.getLong(cursor.getColumnIndex(col.name()))));
+                        field.set(object, cursor.getString(cursor.getColumnIndex(colName)));
+                    } else if (type == Integer.TYPE) {
+                        field.set(object, cursor.getInt(cursor.getColumnIndex(colName)));
+                    } else if (type == Long.TYPE) {
+                        field.set(object, cursor.getLong(cursor.getColumnIndex(colName)));
+                    } else if (type == Boolean.TYPE) {
+                        field.set(object, cursor.getInt(cursor.getColumnIndex(colName)) > 0);
+                    } else if (type == Float.TYPE) {
+                        field.set(object, cursor.getFloat(cursor.getColumnIndex(colName)));
+                    } else if (type == Double.TYPE) {
+                        field.set(object, cursor.getDouble(cursor.getColumnIndex(colName)));
+                    } else if (Date.class.isAssignableFrom(type)) {
+                        field.set(object, new Date(cursor.getLong(cursor.getColumnIndex(colName))));
                     }
                     if (field.getModifiers() == Modifier.PRIVATE) {
                         field.setAccessible(false);
@@ -501,21 +513,24 @@ public class ProviderUtil {
      */
     public static <T> T getChildColumn(Cursor cursor, Class<T> clazz, int prefix) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         T object = clazz.newInstance();
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
         if (privateFields != null) {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
             }
         }
 
-        for (Field field : fields) {
+
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidColumn.class);
             if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                 if (!((DroidColumn) annotation).name().equals("_id")) {
@@ -523,20 +538,24 @@ public class ProviderUtil {
                     if (field.getModifiers() == Modifier.PRIVATE) {
                         field.setAccessible(true);
                     }
-                    if (String.class.isAssignableFrom(field.getType())) {
-                        field.set(object, cursor.getString(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)));
-                    } else if (field.getType() == Integer.TYPE) {
-                        field.set(object, cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)));
-                    } else if (field.getType() == Long.TYPE) {
-                        field.set(object, cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)));
-                    } else if (field.getType() == Boolean.TYPE) {
-                        field.set(object, cursor.getInt(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)) > 0);
-                    } else if (field.getType() == Float.TYPE) {
-                        field.set(object, cursor.getFloat(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)));
-                    } else if (field.getType() == Double.TYPE) {
-                        field.set(object, cursor.getDouble(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix)));
-                    } else if (Date.class.isAssignableFrom(field.getType())) {
-                        field.set(object, new Date(cursor.getLong(cursor.getColumnIndex(clazz.getSimpleName() + col.name() + "_" + prefix))));
+                    Class<?> type = field.getType();
+                    final String colName = col.name();
+                    final String className = clazz.getSimpleName();
+                    final String colIndexStr = new StringBuilder().append(className).append(colName).append("_").append(prefix).toString();
+                    if (String.class.isAssignableFrom(type)) {
+                        field.set(object, cursor.getString(cursor.getColumnIndex(colIndexStr)));
+                    } else if (type == Integer.TYPE) {
+                        field.set(object, cursor.getInt(cursor.getColumnIndex(colIndexStr)));
+                    } else if (type == Long.TYPE) {
+                        field.set(object, cursor.getLong(cursor.getColumnIndex(colIndexStr)));
+                    } else if (type == Boolean.TYPE) {
+                        field.set(object, cursor.getInt(cursor.getColumnIndex(colIndexStr)) > 0);
+                    } else if (type == Float.TYPE) {
+                        field.set(object, cursor.getFloat(cursor.getColumnIndex(colIndexStr)));
+                    } else if (type == Double.TYPE) {
+                        field.set(object, cursor.getDouble(cursor.getColumnIndex(colIndexStr)));
+                    } else if (Date.class.isAssignableFrom(type)) {
+                        field.set(object, new Date(cursor.getLong(cursor.getColumnIndex(colIndexStr))));
                     }
                     if (field.getModifiers() == Modifier.PRIVATE) {
                         field.setAccessible(false);
@@ -557,41 +576,44 @@ public class ProviderUtil {
      * @throws java.lang.Exception if something goes wrong
      */
     public static <T> T createDummyInstance(Class<T> clazz) throws Exception {
-        List<Field> fields = new ArrayList<Field>();
-        Object obj = (T) clazz.newInstance();
+        ArrayList<Field> fields = new ArrayList<>();
+        T obj = (T) clazz.newInstance();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
         if (privateFields != null) {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
             }
         }
 
-        for (Field field : fields) {
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidColumn.class);
             if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                 if (!((DroidColumn) annotation).name().equals("_id")) {
                     if (field.getModifiers() == Modifier.PRIVATE) {
                         field.setAccessible(true);
                     }
-                    if (String.class.isAssignableFrom(field.getType())) {
-                        field.set(obj, randomString(8));
-                    } else if (field.getType() == Integer.TYPE) {
+                    Class<?> type = field.getType();
+                    if (String.class.isAssignableFrom(type)) {
+                        field.set(obj, randomString());
+                    } else if (type == Integer.TYPE) {
                         field.set(obj, TEST_INTEGER);
-                    } else if (field.getType() == Long.TYPE) {
+                    } else if (type == Long.TYPE) {
                         field.set(obj, TEST_LONG);
-                    } else if (field.getType() == Boolean.TYPE) {
+                    } else if (type == Boolean.TYPE) {
                         field.set(obj, TEST_BOOLEAN);
-                    } else if (field.getType() == Float.TYPE) {
+                    } else if (type == Float.TYPE) {
                         field.set(obj, TEST_FLOAT);
-                    } else if (field.getType() == Double.TYPE) {
+                    } else if (type == Double.TYPE) {
                         field.set(obj, TEST_DOUBLE);
-                    } else if (Date.class.isAssignableFrom(field.getType())) {
+                    } else if (Date.class.isAssignableFrom(type)) {
                         field.set(obj, TEST_DATE);
                     }
                     if (field.getModifiers() == Modifier.PRIVATE) {
@@ -602,20 +624,21 @@ public class ProviderUtil {
 
             }
         }
-        return (T) obj;
+        return obj;
     }
 
 
     /**
      * generates a random string
      *
-     * @param len length of the string
      * @return the generated string
      */
-    private static String randomString(int len) {
+    private static String randomString() {
+        int len = 8;
         StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++) {
             sb.append(CHARACTER_SET.charAt(random.nextInt(CHARACTER_SET.length())));
+        }
         return sb.toString();
     }
 
@@ -629,7 +652,7 @@ public class ProviderUtil {
     @SuppressLint("DefaultLocale")
     public void createTable(Class<?> clazz, String table) throws ClassNotFoundException {
 //        Log.d(tag, "createTableFromClass [class:" + clazz.getName() + "][table:" + table + "]");
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
         Field[] privateFields = clazz.getDeclaredFields();
         Field[] publicFields = clazz.getFields();
@@ -639,7 +662,8 @@ public class ProviderUtil {
             Collections.addAll(fields, privateFields);
         }
         if (publicFields != null) {
-            for (Field pf : publicFields) {
+            for (int i=0,size=publicFields.length;i<size;i++) {
+                Field pf = publicFields[i];
                 if (!fields.contains(pf)) {
                     fields.add(pf);
                 }
@@ -649,7 +673,8 @@ public class ProviderUtil {
         //		LOG.d(tag,"fields: " + fields);
         boolean firstField = true;
         boolean added = false;
-        for (Field field : fields) {
+        for (int i=0,size=fields.size();i<size;i++) {
+            Field field = fields.get(i);
             Annotation annotation = field.getAnnotation(DroidColumn.class);
             if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                 if (!firstField) {
@@ -664,20 +689,20 @@ public class ProviderUtil {
                 if (String.class.isAssignableFrom(field.getType())) {
                     queryBuilder.append("TEXT");
                 }
-
-                if (field.getType() == Integer.TYPE) {
+                Class<?> type = field.getType();
+                if (type == Integer.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Long.TYPE) {
+                } else if (type == Long.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Boolean.TYPE) {
+                } else if (type == Boolean.TYPE) {
                     queryBuilder.append("INTEGER");
-                } else if (field.getType() == Float.TYPE) {
+                } else if (type == Float.TYPE) {
                     queryBuilder.append("REAL");
-                } else if (field.getType() == Double.TYPE) {
+                } else if (type == Double.TYPE) {
                     queryBuilder.append("REAL");
-                } else if (Date.class.isAssignableFrom(field.getType())) {
+                } else if (Date.class.isAssignableFrom(type)) {
                     queryBuilder.append("INTEGER");
-                } else if (BigDecimal.class.isAssignableFrom(field.getType())) {
+                } else if (BigDecimal.class.isAssignableFrom(type)) {
                     queryBuilder.append("REAL");
                 }
             }
@@ -719,7 +744,7 @@ public class ProviderUtil {
      * @param obj class instance to decrypt
      */
     public void decryptObject(Object obj) {
-        List<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         Class<?> clazz;
 
 
@@ -732,20 +757,21 @@ public class ProviderUtil {
                 Collections.addAll(fields, privateFields);
             }
             if (publicFields != null) {
-                for (Field pf : publicFields) {
+                for (int i=0,size=publicFields.length;i<size;i++) {
+                    Field pf = publicFields[i];
                     if (!fields.contains(pf)) {
                         fields.add(pf);
                     }
                 }
             }
-            for (Field field : fields) {
+            for (int i=0,size=fields.size();i<size;i++) {
+                Field field = fields.get(i);
                 Annotation annotation = field.getAnnotation(DroidColumn.class);
                 if (!Modifier.isStatic(field.getModifiers()) && (annotation != null)) {
                     if (!((DroidColumn) annotation).name().equals("_id")) {
                         Field isf = cls.getDeclaredField(field.getName());
                         if (String.class.isAssignableFrom(field.getType())) {
                             String val = (String) isf.get(obj);
-
                             isf.set(obj, val);
                         }
                     }

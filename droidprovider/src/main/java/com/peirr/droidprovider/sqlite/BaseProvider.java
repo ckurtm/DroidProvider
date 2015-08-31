@@ -43,7 +43,7 @@ import java.util.List;
  */
 public abstract class BaseProvider extends ContentProvider {
 
-    String TAG = BaseProvider.class.getSimpleName();
+    private String TAG = BaseProvider.class.getSimpleName();
 
     public static final int PROVIDE_TABLE = 0x029;
     public static final int PROVIDE_URI = 0x030;
