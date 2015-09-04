@@ -203,11 +203,9 @@ public abstract class BaseProvider extends ContentProvider {
                 break;
             }
         }
-
         if (!found) {
             throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-
         Cursor cursor = queryBuilder.query(sqlOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
         registerUri(cursor, uri);
         return cursor;

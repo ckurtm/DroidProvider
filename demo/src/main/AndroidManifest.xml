@@ -22,6 +22,11 @@
             android:authorities="@string/authority"
             android:exported="false"
             android:name=".provider.TodoProvider" />
+
+        <provider
+            android:authorities="@string/test_authority"
+            android:exported="false"
+            android:name=".TestProvider" />
     </application>
 
 </manifest>

@@ -21,6 +21,7 @@ package mbanje.kurt.todo;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
@@ -43,7 +44,7 @@ import mbanje.kurt.todo.provider.TodoSqlHelper;
  */
 public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
     String TAG = TodoHelperTest.class.getSimpleName();
-    private MockContentResolver resolver;
+    private ContentResolver resolver;
 
     public TodoHelperTest() {
         super(TodoProvider.class, "mbanje.kurt.todo.debug");
@@ -52,7 +53,7 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        resolver = getMockContentResolver();
+        resolver = getContext().getContentResolver();
     }
 
     public void testInsertDelete() throws IOException {
@@ -121,8 +122,8 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
     }
 
 
-    public void testPerfomance() throws Exception {
-//        resolver.delete(TodoItem.CONTENT_URI,null,null);
+    public void testOldPerfomance() throws Exception {
+        resolver.delete(TodoItem.CONTENT_URI,null,null);
         int sample = 10;
         long[] values = new long[sample];
         for (int index = 0; index < sample ; index++) {
@@ -143,10 +144,10 @@ public class TodoHelperTest extends ProviderTestCase2<TodoProvider> {
 
 
     private void runInsertionTest(int count) throws Exception {
+        TodoItem item = new TodoItem("label","thisis a description",false);
         for (int i = 0; i < count; i++) {
-            TodoItem item = ProviderUtil.createDummyInstance(TodoItem.class);
             ContentValues values = ProviderUtil.getContentValues(item,false);
-//            resolver.insert(TodoItem.CONTENT_URI,ProviderUtil.getContentValues(item,false));
+            resolver.insert(TodoItem.CONTENT_URI,values);
         }
     }
 }

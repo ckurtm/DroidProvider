@@ -8,6 +8,7 @@ import android.app.Application;
  */
 public class Todo extends Application {
 
+    public static final String PROVIDER_CLASS = "TestProvider";
     @Override public void onCreate() {
         super.onCreate();
     }

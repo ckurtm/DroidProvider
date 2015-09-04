@@ -25,9 +25,13 @@ import com.peirr.droidprovider.sqlite.annotations.DroidProvider;
 import com.peirr.droidprovider.sqlite.annotations.ObjectMapper;
 import com.peirr.droidprovider.sqlite.annotations.ObjectRow;
 
+import ckm.simple.sql_provider.annotation.SimpleSQLColumn;
+import ckm.simple.sql_provider.annotation.SimpleSQLTable;
+
 /**
  * Created by kurt on 2014/07/18.
  */
+@SimpleSQLTable(table = "todo",provider = Todo.PROVIDER_CLASS)
 public class TodoItem extends ObjectRow {
 
     @DroidProvider(BaseProvider.PROVIDE_TABLE)
@@ -39,12 +43,15 @@ public class TodoItem extends ObjectRow {
     @DroidProvider(BaseProvider.PROVIDE_KEY)
     public static final String KEY = Mapper.label;
 
+    @SimpleSQLColumn(Mapper.label)
     @DroidColumn(name = Mapper.label)
     public String label;
 
+    @SimpleSQLColumn(Mapper.description)
     @DroidColumn(name = Mapper.description)
     public String description;
 
+    @SimpleSQLColumn(Mapper.completed)
     @DroidColumn(name = Mapper.completed)
     public boolean completed;
 
